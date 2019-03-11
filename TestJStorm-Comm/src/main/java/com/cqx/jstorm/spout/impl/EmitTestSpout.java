@@ -23,13 +23,17 @@ public class EmitTestSpout extends ISpout {
     }
 
     @Override
-    protected void nextTuple() {
-        while (atomicInteger.getAndIncrement() < 1) {
-            for (int i = 0; i < 1000; i++) {
-                this.collector.emit(new Values(this.toString() + "####" + i));
-                logger.info("####emit：{}", i);
-            }
-            Utils.sleep(500);
-        }
+    protected void nextTuple() throws Exception {
+        int emit_cnt = atomicInteger.getAndIncrement();
+        this.collector.emit(new Values(this.toString() + "####" + emit_cnt));
+        logger.info("####emit：{}", emit_cnt);
+        logger.info("####sleep 50");
+        Utils.sleep(50);
+//        throw new Exception("spouttest throw Exception.");
+    }
+
+    @Override
+    protected void close() {
+        logger.info("####{} to_cleanup", this);
     }
 }

@@ -30,9 +30,9 @@ public abstract class ISpout implements Serializable {
         this.collector = collector;
     }
 
-    protected abstract void open(Map conf, TopologyContext context);
+    protected abstract void open(Map conf, TopologyContext context) throws Exception;
 
-    protected abstract void nextTuple();
+    protected abstract void nextTuple() throws Exception;
 
     protected void declareOutputFields(OutputFieldsDeclarer declarer) {
         declarer.declare(new Fields(AppConst.FIELDS));

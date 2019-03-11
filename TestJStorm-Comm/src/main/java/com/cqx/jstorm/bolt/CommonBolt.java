@@ -5,6 +5,8 @@ import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseRichBolt;
 import backtype.storm.tuple.Tuple;
+import com.cqx.jstorm.util.ExceptionMetrics;
+import com.cqx.jstorm.util.IExceptionDo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +21,7 @@ public class CommonBolt extends BaseRichBolt {
 
     private static final Logger logger = LoggerFactory.getLogger(CommonBolt.class);
     private IBolt iBolt;
+    private ExceptionMetrics exceptionMetrics;
 
     public CommonBolt(String bolt_name) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
         this.iBolt = IBolt.generate(bolt_name);
@@ -26,13 +29,29 @@ public class CommonBolt extends BaseRichBolt {
 
     @Override
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
+        this.exceptionMetrics = new ExceptionMetrics(new IExceptionDo() {
+            @Override
+            public void exceptionDo() {
+                cleanup();
+            }
+        });
         this.iBolt.setCollector(collector);
-        this.iBolt.prepare(stormConf, context);
+        try {
+            this.iBolt.prepare(stormConf, context);
+        } catch (Exception e) {
+            this.logger.error(e.getMessage(), e);
+            this.exceptionMetrics.markExceptionSingle("组件初始化发生异常", e);
+        }
     }
 
     @Override
     public void execute(Tuple input) {
-        this.iBolt.execute(input);
+        try {
+            this.iBolt.execute(input);
+        } catch (Exception e) {
+            this.logger.error(e.getMessage(), e);
+            this.exceptionMetrics.markException("组件处理发生异常", e);
+        }
     }
 
     @Override

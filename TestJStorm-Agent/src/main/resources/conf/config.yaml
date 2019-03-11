@@ -1,14 +1,14 @@
 jstorm:
   nimbus_host: 10.1.8.78
   nimbus_thrift_port: 17627
-  storm_zookeeper_servers: 10.1.8.78,10.1.8.81,10.1.4.186
+  storm_zookeeper_servers: 10.1.8.78
   storm_zookeeper_port: 2182
   storm_zookeeper_root: /udap/collect_jstorm
 
 topology:
-  worker_num: 1
+  worker_num: 2
   ack_num: 0
-  worker_memory: 3072
+  worker_memory: 1024
   name: EmitTest
 
 spout:
@@ -16,5 +16,5 @@ spout:
   parall: 1
 
 bolt:
-  name: EmitTestBolt
-  parall: 2
+  name: EmitThrowExceptionBolt
+  parall: 1

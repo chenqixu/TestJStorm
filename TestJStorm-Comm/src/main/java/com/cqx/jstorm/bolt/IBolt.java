@@ -30,9 +30,9 @@ public abstract class IBolt implements Serializable {
         this.collector = collector;
     }
 
-    protected abstract void prepare(Map stormConf, TopologyContext context);
+    protected abstract void prepare(Map stormConf, TopologyContext context) throws Exception;
 
-    protected abstract void execute(Tuple input);
+    protected abstract void execute(Tuple input) throws Exception;
 
     protected void declareOutputFields(OutputFieldsDeclarer declarer) {
     }
