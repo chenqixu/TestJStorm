@@ -12,6 +12,7 @@ public class TopologyBean {
     private int ack_num;
     private int worker_memory;
     private String name;
+    private String ip;
 
     public static TopologyBean newbuilder() {
         return new TopologyBean();
@@ -23,6 +24,7 @@ public class TopologyBean {
         ack_num = (Integer) tmp.get("ack_num");
         worker_memory = (Integer) tmp.get("worker_memory");
         name = (String) tmp.get("name");
+        ip = (String) tmp.get("ip");
         return this;
     }
 
@@ -56,5 +58,13 @@ public class TopologyBean {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
     }
 }

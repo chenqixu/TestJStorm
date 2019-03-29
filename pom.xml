@@ -104,5 +104,12 @@
             <version>4.11</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- dpi socket -->
+        <dependency>
+            <groupId>com.bonc.dpiia</groupId>
+            <artifactId>bonc-socket</artifactId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
 </project>

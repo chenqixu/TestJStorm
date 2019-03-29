@@ -10,10 +10,7 @@ public class AgentBean {
     private String conf;
 
     public String getConf() {
-        if (isWindow())
-            return "file:///" + conf;
-        else
-            return conf;
+        return "file:///" + conf;
     }
 
     public void setConf(String conf) {

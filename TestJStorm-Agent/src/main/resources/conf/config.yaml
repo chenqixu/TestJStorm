@@ -6,15 +6,16 @@ jstorm:
   storm_zookeeper_root: /udap/collect_jstorm
 
 topology:
-  worker_num: 2
+  worker_num: 1
   ack_num: 0
   worker_memory: 1024
   name: EmitTest
+  ip: 10.1.8.78
 
 spout:
   name: EmitTestSpout
   parall: 1
 
 bolt:
-  name: EmitThrowExceptionBolt
+  name: EmitTestBolt
   parall: 1

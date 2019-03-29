@@ -1,12 +1,12 @@
 package com.cqx.jstorm.util;
 
 import backtype.storm.Config;
-import edu.emory.mathcs.backport.java.util.Arrays;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Map;
 
 /**
