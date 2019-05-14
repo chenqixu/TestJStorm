@@ -33,16 +33,22 @@ public class TestJStormAgent {
         ArgsParser argsParser = ArgsParser.builder();
         argsParser.addParam("--conf");
         argsParser.addParam("--type");
+        argsParser.addParam("--jarpath");
         argsParser.perser(args);
         AgentBean agentBean = new AgentBean();
         agentBean.setConf(argsParser.getParamValue("--conf"));
         agentBean.setType(argsParser.getParamValue("--type"));
+        agentBean.setJarpath(argsParser.getParamValue("--jarpath"));
         logger.info("agentBean：{}", agentBean);
         // 选择执行方式
         switch (agentBean.getType()) {
             case "submit":
                 // 提交任务
                 SubmitTopology.builder().submit(agentBean);
+                break;
+            case "localsubmit":
+                // 提交任务
+                SubmitTopology.builder().localSubmit(agentBean);
                 break;
             case "kill":
                 KillTopology.builder().kill(agentBean);

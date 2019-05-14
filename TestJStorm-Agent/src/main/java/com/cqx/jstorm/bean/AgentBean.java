@@ -8,6 +8,7 @@ package com.cqx.jstorm.bean;
 public class AgentBean {
     private String type;
     private String conf;
+    private String jarpath;
 
     public String getConf() {
         return "file:///" + conf;
@@ -25,8 +26,16 @@ public class AgentBean {
         this.type = type;
     }
 
+    public String getJarpath() {
+        return jarpath;
+    }
+
+    public void setJarpath(String jarpath) {
+        this.jarpath = jarpath;
+    }
+
     public String toString() {
-        return "conf：" + conf + "，type：" + type;
+        return "conf：" + conf + "，type：" + type + "，jarpath：" + jarpath;
     }
 
     /**

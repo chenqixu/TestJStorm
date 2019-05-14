@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 公共Spout接口
@@ -20,10 +21,19 @@ public abstract class ISpout implements Serializable {
 
     public static final Logger logger = LoggerFactory.getLogger(ISpout.class);
     protected SpoutOutputCollector collector;
+    private TopologyContext context;
+    private AtomicInteger batchIndex;
+    private String taskInfo;
 
     public static ISpout generate(String name) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
-        Class cls = Class.forName(AppConst.SPOUT_IMPL_PACKAGE + name);
+        Class cls = Class.forName(name);
         return (ISpout) cls.newInstance();
+    }
+
+    public void setContext(TopologyContext context) {
+        this.context = context;
+        this.batchIndex = new AtomicInteger();
+        this.taskInfo = this.context.getThisComponentId() + this.context.getThisTaskId() + this.context.getThisTaskIndex() + "@";
     }
 
     public void setCollector(SpoutOutputCollector collector) {
@@ -45,5 +55,12 @@ public abstract class ISpout implements Serializable {
     }
 
     protected void close() {
+    }
+
+    public String grenerateMessageId() {
+        if (batchIndex == null) throw new NullPointerException("context is null, need init.");
+        int result = batchIndex.getAndIncrement();
+        if (batchIndex.get() > 10000000) batchIndex.set(0);
+        return taskInfo + result;
     }
 }

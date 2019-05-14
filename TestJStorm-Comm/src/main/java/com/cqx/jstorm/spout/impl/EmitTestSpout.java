@@ -27,8 +27,8 @@ public class EmitTestSpout extends ISpout {
         int emit_cnt = atomicInteger.getAndIncrement();
         this.collector.emit(new Values(this.toString() + "####" + emit_cnt));
         logger.info("####emit：{}", emit_cnt);
-        logger.info("####sleep 50");
-        Utils.sleep(50);
+        logger.info("####sleep 500");
+        Utils.sleep(500);
 //        throw new Exception("spouttest throw Exception.");
     }
 

@@ -49,7 +49,7 @@ public class YamlParser {
      * @param conf
      * @param appConst
      */
-    public void setConf(Map conf, AppConst appConst) {
+    public void setConf(Map<String, Object> conf, AppConst appConst) {
         // nimbus地址
         conf.put(Config.NIMBUS_HOST, appConst.getJstormBean().getNimbus_host());
         // nimbus thrift端口
@@ -61,5 +61,7 @@ public class YamlParser {
         conf.put(Config.STORM_ZOOKEEPER_PORT, appConst.getJstormBean().getStorm_zookeeper_port());
         // zookeeper上jstorm路径
         conf.put(Config.STORM_ZOOKEEPER_ROOT, appConst.getJstormBean().getStorm_zookeeper_root());
+        // 组件参数
+        conf.putAll(appConst.getParamBean());
     }
 }

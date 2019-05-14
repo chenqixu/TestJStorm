@@ -34,6 +34,7 @@ public class CommonSpout extends BaseRichSpout {
                 close();
             }
         });
+        this.iSpout.setContext(context);
         this.iSpout.setCollector(collector);
         try {
             this.iSpout.open(conf, context);

@@ -1,10 +1,8 @@
 package com.cqx.jstorm.util;
 
-import com.cqx.jstorm.bean.BoltBean;
-import com.cqx.jstorm.bean.JstormBean;
-import com.cqx.jstorm.bean.SpoutBean;
-import com.cqx.jstorm.bean.TopologyBean;
+import com.cqx.jstorm.bean.*;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -17,20 +15,32 @@ public class AppConst {
     public static final String TOPOLOGY = "topology";
     public static final String SPOUT = "spout";
     public static final String BOLT = "bolt";
+    public static final String PARAM = "param";
+    public static final String TYPEDEFS = "typedefs";
     public static final String SPOUT_IMPL_PACKAGE = "com.cqx.jstorm.spout.impl.";
     public static final String BOLT_IMPL_PACKAGE = "com.cqx.jstorm.bolt.impl.";
     public static final String FIELDS = "common";
+    public static final String SOURDIR = "sourDir";
+    public static final String BACKDIR = "backDir";
+    public static final String SINKDIR = "sinkDir";
+    public static final String TEMPDIR = "tempDir";
+    public static final String ERRORDIR = "errorDir";
+    public static final String SEPARATOR = "separator";
+    public static final String DATELOCAL = "dateLocal";
+    public static final String NAMESEPARATOR = "nameSeparator";
 
     private JstormBean jstormBean;
     private TopologyBean topologyBean;
     private SpoutBean spoutBean;
-    private BoltBean boltBean;
+    private List<BoltBean> boltBeanList;
+    private ParamBean paramBean;
 
     public void parserParam(Map<?, ?> params) {
         jstormBean = JstormBean.newbuilder().parser(params.get(JSTORM));
         topologyBean = TopologyBean.newbuilder().parser(params.get(TOPOLOGY));
         spoutBean = SpoutBean.newbuilder().parser(params.get(SPOUT));
-        boltBean = BoltBean.newbuilder().parser(params.get(BOLT));
+        boltBeanList = BoltBean.parser(params.get(BOLT));
+        paramBean = ParamBean.newbuilder().parser(params.get(PARAM));
     }
 
     public TopologyBean getTopologyBean() {
@@ -41,11 +51,15 @@ public class AppConst {
         return spoutBean;
     }
 
-    public BoltBean getBoltBean() {
-        return boltBean;
-    }
-
     public JstormBean getJstormBean() {
         return jstormBean;
+    }
+
+    public ParamBean getParamBean() {
+        return paramBean;
+    }
+
+    public List<BoltBean> getBoltBeanList() {
+        return boltBeanList;
     }
 }

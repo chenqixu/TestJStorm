@@ -6,6 +6,7 @@ import backtype.storm.topology.BoltDeclarer;
 import backtype.storm.topology.SpoutDeclarer;
 import backtype.storm.topology.TopologyBuilder;
 import com.alibaba.jstorm.utils.PathUtils;
+import com.cqx.jstorm.bean.BoltBean;
 import com.cqx.jstorm.bolt.CommonBolt;
 import com.cqx.jstorm.spout.CommonSpout;
 import com.cqx.jstorm.util.AppConst;
@@ -66,7 +67,7 @@ public class MainTopology {
         try {
             // 加载yaml配置文件
             yaml = new Yaml();
-            is = MainTopology.class.getClassLoader().getResourceAsStream("conf/config.yaml");
+            is = MainTopology.class.getClassLoader().getResourceAsStream("config.yaml");
             map = yaml.loadAs(is, Map.class);
             is.close();
 
@@ -80,10 +81,12 @@ public class MainTopology {
                     new CommonSpout(appConst.getSpoutBean().getName()),
                     appConst.getSpoutBean().getParall());
             // 创建bolt
-            BoltDeclarer totalBolt = builder.setBolt(appConst.getBoltBean().getName(),
-                    new CommonBolt(appConst.getBoltBean().getName()),
-                    appConst.getBoltBean().getParall())
-                    .shuffleGrouping(appConst.getSpoutBean().getName());
+            for (BoltBean boltBean : appConst.getBoltBeanList()) {
+                BoltDeclarer totalBolt = builder.setBolt(boltBean.getName(),
+                        new CommonBolt(boltBean.getName()),
+                        boltBean.getParall())
+                        .shuffleGrouping(boltBean.getComponentId());
+            }
             // 配置
             Config conf = new Config();
             // 允许debug

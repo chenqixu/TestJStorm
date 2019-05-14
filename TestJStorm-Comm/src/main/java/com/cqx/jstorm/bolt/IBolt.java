@@ -22,7 +22,7 @@ public abstract class IBolt implements Serializable {
     protected OutputCollector collector;
 
     public static IBolt generate(String name) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
-        Class cls = Class.forName(AppConst.BOLT_IMPL_PACKAGE + name);
+        Class cls = Class.forName(name);
         return (IBolt) cls.newInstance();
     }
 

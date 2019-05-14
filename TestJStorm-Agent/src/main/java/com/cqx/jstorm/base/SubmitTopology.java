@@ -1,17 +1,17 @@
 package com.cqx.jstorm.base;
 
 import backtype.storm.Config;
+import backtype.storm.LocalCluster;
 import backtype.storm.StormSubmitter;
+import backtype.storm.topology.BoltDeclarer;
 import backtype.storm.topology.TopologyBuilder;
 import com.alibaba.jstorm.client.ConfigExtension;
 import com.alibaba.jstorm.client.WorkerAssignment;
 import com.cqx.jstorm.bean.AgentBean;
+import com.cqx.jstorm.bean.BoltBean;
 import com.cqx.jstorm.bolt.CommonBolt;
 import com.cqx.jstorm.spout.CommonSpout;
-import com.cqx.jstorm.util.AppConst;
-import com.cqx.jstorm.util.ArgsParser;
-import com.cqx.jstorm.util.FileUtil;
-import com.cqx.jstorm.util.YamlParser;
+import com.cqx.jstorm.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,10 +50,12 @@ public class SubmitTopology {
         ArgsParser argsParser = ArgsParser.builder();
         argsParser.addParam("--conf");
         argsParser.addParam("--type");
+        argsParser.addParam("--jarpath");
         argsParser.perser(args);
         AgentBean agentBean = new AgentBean();
         agentBean.setConf(argsParser.getParamValue("--conf"));
         agentBean.setType(argsParser.getParamValue("--type"));
+        agentBean.setJarpath(argsParser.getParamValue("--jarpath"));
         logger.info("agentBean：{}", agentBean);
         SubmitTopology.builder().submit(agentBean, "jar");
     }
@@ -69,7 +71,7 @@ public class SubmitTopology {
     private void addSpout(TopologyBuilder builder) throws IllegalAccessException, ClassNotFoundException, InstantiationException {
         // 创建Spout
         builder.setSpout(appConst.getSpoutBean().getName(),
-                new CommonSpout(appConst.getSpoutBean().getName()),
+                new CommonSpout(appConst.getSpoutBean().getGenerateClassName()),
                 appConst.getSpoutBean().getParall());
         topologyTaskParallelismMap.put(appConst.getSpoutBean().getName(), appConst.getSpoutBean().getParall());
     }
@@ -83,12 +85,42 @@ public class SubmitTopology {
      * @throws InstantiationException
      */
     private void addBolt(TopologyBuilder builder) throws IllegalAccessException, ClassNotFoundException, InstantiationException {
-        // shuffleGrouping：Tuples are randomly distributed across the bolt's tasks in a way such that each bolt is guaranteed to get an equal number of tuples.
-        builder.setBolt(appConst.getBoltBean().getName(),
-                new CommonBolt(appConst.getBoltBean().getName()),
-                appConst.getBoltBean().getParall())
-                .shuffleGrouping(appConst.getSpoutBean().getName());
-        topologyTaskParallelismMap.put(appConst.getBoltBean().getName(), appConst.getBoltBean().getParall());
+        for (BoltBean boltBean : appConst.getBoltBeanList()) {
+            BoltDeclarer boltDeclarer = builder.setBolt(boltBean.getName(),
+                    new CommonBolt(boltBean.getGenerateClassName()),
+                    boltBean.getParall());
+            switch (boltBean.getGroupingcode()) {
+                case FIELDSGROUPING:
+                    break;
+                case GLOBALGROUPING:
+                    break;
+                case SHUFFLEGROUPING:
+                    if (boltBean.getStreamId() != null && boltBean.getStreamId().length() > 0)
+                        boltDeclarer.shuffleGrouping(boltBean.getComponentId(), boltBean.getStreamId());
+                    else
+                        boltDeclarer.shuffleGrouping(boltBean.getComponentId());
+                    break;
+                case LOCALORSHUFFLEGROUPING:
+                    break;
+                case LOCALFIRSTGROUPING:
+                    if (boltBean.getStreamId() != null && boltBean.getStreamId().length() > 0)
+                        boltDeclarer.localFirstGrouping(boltBean.getComponentId(), boltBean.getStreamId());
+                    else
+                        boltDeclarer.localFirstGrouping(boltBean.getComponentId());
+                    break;
+                case NONEGROUPING:
+                    break;
+                case ALLGROUPING:
+                    break;
+                case DIRECTGROUPING:
+                    break;
+                case CUSTOMGROUPING:
+                    break;
+                default:
+                    break;
+            }
+            topologyTaskParallelismMap.put(boltBean.getName(), boltBean.getParall());
+        }
     }
 
     /**
@@ -177,12 +209,22 @@ public class SubmitTopology {
             // 提交topology，远程提交模式
             StormSubmitter.submitTopology(appConst.getTopologyBean().getName(),
                     conf, builder.createTopology(), null,
-                    FileUtil.builder().listFiles("D:\\Document\\Workspaces\\Git\\TestJStorm\\target", "jar"));
+                    FileUtil.builder().listFiles(agentBean.getJarpath(), "jar"));
+        } else if (type.equals("local")) {
+            // 本地模式提交
+            LocalCluster cluster = new LocalCluster();
+            cluster.submitTopology(appConst.getTopologyBean().getName(), conf, builder.createTopology());
+            Utils.sleep(12000);
+            cluster.shutdown();
         }
     }
 
     public void submit(AgentBean agentBean) throws Exception {
         submit(agentBean, "remote");
+    }
+
+    public void localSubmit(AgentBean agentBean) throws Exception {
+        submit(agentBean, "local");
     }
 
 }

@@ -10,6 +10,7 @@ import java.util.Map;
 public class SpoutBean {
     private String name;
     private int parall;
+    private String packagename;
 
     public static SpoutBean newbuilder() {
         return new SpoutBean();
@@ -17,8 +18,9 @@ public class SpoutBean {
 
     public SpoutBean parser(Object param) {
         Map<String, ?> tmp = (Map<String, ?>) param;
-        parall = (Integer) tmp.get("parall");
-        name = (String) tmp.get("name");
+        setParall((Integer) tmp.get("parall"));
+        setName((String) tmp.get("name"));
+        setPackagename((String) tmp.get("packagename"));
         return this;
     }
 
@@ -36,5 +38,17 @@ public class SpoutBean {
 
     public void setParall(int parall) {
         this.parall = parall;
+    }
+
+    public String getPackagename() {
+        return packagename;
+    }
+
+    public void setPackagename(String packagename) {
+        this.packagename = packagename;
+    }
+
+    public String getGenerateClassName() {
+        return getPackagename() + "." + getName();
     }
 }
