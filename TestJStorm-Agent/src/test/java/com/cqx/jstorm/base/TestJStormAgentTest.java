@@ -6,6 +6,7 @@ public class TestJStormAgentTest {
 
     @Test
     public void localsubmit() throws Exception {
+//        System.setProperty("java.security.auth.login.config", "D:\\Document\\Workspaces\\Git\\TestJStorm\\TestJStorm-Agent\\src\\main\\resources\\kafka_client_jaas.conf");
         String[] _args = new String[]{"--conf", "D:\\Document\\Workspaces\\Git\\TestJStorm\\TestJStorm-Agent\\src\\main\\resources\\config.local.yaml",
                 "--type", "localsubmit",
                 "--jarpath", "D:\\Document\\Workspaces\\Git\\TestJStorm\\target"

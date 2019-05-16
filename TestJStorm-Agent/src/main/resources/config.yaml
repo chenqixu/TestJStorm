@@ -22,14 +22,20 @@ bolt:
     packagename: com.cqx.jstorm.bolt.impl
     parall: 6
     groupingcode: LOCALFIRSTGROUPING
-    parent_type: spout
-    parent_name: EmitDpiSpout
+    componentId: EmitDpiSpout
+    streamId:
   - name: EmitDpiErrBolt
     packagename: com.cqx.jstorm.bolt.impl
     parall: 3
     groupingcode: LOCALFIRSTGROUPING
-    parent_type: bolt
-    parent_name: EmitDpiIBolt
+    componentId: EmitDpiIBolt
+    streamId: err
+  - name: EmitDpiKafkaBolt
+    packagename: com.cqx.jstorm.bolt.impl
+    parall: 3
+    groupingcode: LOCALFIRSTGROUPING
+    componentId: EmitDpiIBolt
+    streamId: kafka
 
 param:
   sourDir: /bi/dataprocess/stream/hwlte/streaminput
@@ -41,6 +47,8 @@ param:
   dateLocal: 3
   nameSeparator: _
   bolt_num: 2
+  kafkaConfDir: "/bi/user/cqx/conf/producer.properties"
+  schemaUrl: "http://10.1.2.212:18061/SchemaService/getSchema?t="
   typedefs:
     - name: http
       keyWord: HTTP
@@ -49,6 +57,7 @@ param:
       hwField: label,apply_classify,apply_name,web_classify,web_name,search_keyword,urlmd5
       sinkField: xdr_id,imsi,imei,msisdn,user_ip,tac,eci,rat,apn,app_type_code,procedure_start_time,delay_time,procedure_end_time,app_class_top,app_class,source_port,server_ip,destination_port,upbytes,downbytes,up_packet,down_packet,ul_tcp_disordered_packets,dl_tcp_disordered_packets,ul_tcp_retransmission_packets,dl_tcp_retransmission_packets,ul_ip_frag_packets,dl_ip_frag_packets,host,uri,s_year,s_month,s_day,s_hour,apply_name,web_classify,web_name,search_keyword,apply_classify,user_agent,user_ipv6,app_server_ipv6,filename
       rtmField: city_1,imsi,imei,msisdn,tac,eci,rat,procedure_start_time,app_class,host,uri,apply_classify,apply_name,web_classify,web_name,search_keyword
+      topic: nmc_tb_lte_http
     - name: other
       keyWord: OTHER
       isDpi: true
@@ -56,6 +65,7 @@ param:
       hwField: label,apply_classify,apply_name,web_classify,web_name,search_keyword,urlmd5
       sinkField: xdr_id,imsi,imei,msisdn,user_ip,tac,eci,apn,app_type_code,procedure_start_time,delay_time,procedure_end_time,app_class_top,app_class,source_port,server_ip,destination_port,upbytes,downbytes,up_packet,down_packet,ul_tcp_disordered_packets,dl_tcp_disordered_packets,ul_tcp_retransmission_packets,dl_tcp_retransmission_packets,ul_ip_frag_packets,dl_ip_frag_packets,s_year,s_month,s_day,s_hour,app_server_ip_ipv6,apply_name,apply_classify,user_ipv6,filename
       rtmField:
+      topic:
     - name: rtsp
       keyWord: RTSP
       isDpi: true
@@ -63,3 +73,4 @@ param:
       hwField: label,apply_classify,apply_name,web_classify,web_name,search_keyword,urlmd5
       sinkField: xdr_id,imsi,imei,msisdn,user_ip,tac,eci,apn,app_type_code,procedure_start_time,delay_time,procedure_end_time,app_class_top,app_class,source_port,server_ip,destination_port,upbytes,downbytes,up_packet,down_packet,ul_tcp_disordered_packets,dl_tcp_disordered_packets,ul_tcp_retransmission_packets,dl_tcp_retransmission_packets,ul_ip_frag_packets,dl_ip_frag_packets,url,user_agent,rtp_server_ip,s_year,s_month,s_day,s_hour,apply_name,web_classify,web_name,apply_classify,user_ipv6,app_server_ipv6,filename
       rtmField:
+      topic:

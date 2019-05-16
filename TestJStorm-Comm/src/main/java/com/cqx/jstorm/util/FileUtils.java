@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * FileUtils
@@ -14,6 +16,27 @@ import java.io.FilenameFilter;
 public class FileUtils {
 
     private static Logger logger = LoggerFactory.getLogger(FileUtils.class);
+
+    public static FileUtils builder() {
+        return new FileUtils();
+    }
+
+    public static String endWith(String path) {
+        if (path.endsWith("/")) return path;
+        else return path + "/";
+    }
+
+    public List<File> listFiles(String path, String endWith) {
+        File file = new File(path);
+        List<File> fileList = new ArrayList<>();
+        for (File tmp : file.listFiles()) {
+            if (tmp.getName().endsWith(endWith)) {
+                logger.info("tmp.getName()：{}", tmp.getName());
+                fileList.add(tmp);
+            }
+        }
+        return fileList;
+    }
 
     public String[] listFile(String path) {
         return listFile(path, null);
@@ -53,10 +76,5 @@ public class FileUtils {
             logger.warn("_source：{}，_dist：{}，sourcefile.exists() ：{}, sourcefile.isFile()：{} , !distfile.exists()：{}",
                     _source, _dist, sourcefile.exists(), sourcefile.isFile(), !distfile.exists());
         }
-    }
-
-    public String endWith(String path) {
-        if (path.endsWith("/")) return path;
-        else return path + "/";
     }
 }
