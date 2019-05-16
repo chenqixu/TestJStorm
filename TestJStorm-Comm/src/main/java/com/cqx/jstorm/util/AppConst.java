@@ -16,6 +16,7 @@ public class AppConst {
     public static final String SPOUT = "spout";
     public static final String BOLT = "bolt";
     public static final String PARAM = "param";
+    public static final String CLASSLOAD = "classload";
     public static final String TYPEDEFS = "typedefs";
     public static final String SPOUT_IMPL_PACKAGE = "com.cqx.jstorm.spout.impl.";
     public static final String BOLT_IMPL_PACKAGE = "com.cqx.jstorm.bolt.impl.";
@@ -41,6 +42,8 @@ public class AppConst {
         spoutBean = SpoutBean.newbuilder().parser(params.get(SPOUT));
         boltBeanList = BoltBean.parser(params.get(BOLT));
         paramBean = ParamBean.newbuilder().parser(params.get(PARAM));
+        // 加载自定义类
+        ClassLoadUtil.newbuilder().parser(params.get(CLASSLOAD), paramBean);
     }
 
     public TopologyBean getTopologyBean() {

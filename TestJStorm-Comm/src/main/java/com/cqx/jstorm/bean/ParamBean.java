@@ -1,7 +1,5 @@
 package com.cqx.jstorm.bean;
 
-import com.cqx.jstorm.util.KafkaProducerUtil;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,7 +16,6 @@ public class ParamBean extends HashMap<String, Object> {
 
     public ParamBean parser(Object param) {
         Map<String, ?> tmp = (Map<String, ?>) param;
-        KafkaProducerUtil.initKafkaClientJAAS(tmp);
         this.putAll(tmp);
         return this;
     }

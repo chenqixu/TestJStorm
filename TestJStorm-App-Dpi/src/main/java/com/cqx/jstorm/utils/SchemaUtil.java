@@ -1,4 +1,4 @@
-package com.cqx.jstorm.util;
+package com.cqx.jstorm.utils;
 
 import org.apache.avro.Schema;
 import org.slf4j.Logger;

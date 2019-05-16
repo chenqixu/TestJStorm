@@ -26,7 +26,7 @@ public class YamlParserTest {
 
     @Test
     public void parserConf() throws Exception {
-        String[] args = new String[]{"--conf", "D:\\Document\\Workspaces\\Git\\TestJStorm\\TestJStorm-Agent\\src\\main\\resources\\config.yaml",
+        String[] args = new String[]{"--conf", "D:\\Document\\Workspaces\\Git\\TestJStorm\\TestJStorm-Agent\\src\\main\\resources\\config.local.yaml",
                 "--type", "submit"};
         // 解析参数
         ArgsParser argsParser = ArgsParser.builder();

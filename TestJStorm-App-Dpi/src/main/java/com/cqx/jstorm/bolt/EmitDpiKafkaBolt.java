@@ -5,8 +5,8 @@ import backtype.storm.tuple.Tuple;
 import com.cqx.jstorm.bean.KafkaTuple;
 import com.cqx.jstorm.bean.TypeDef;
 import com.cqx.jstorm.util.AppConst;
-import com.cqx.jstorm.util.GenericRecordUtil;
-import com.cqx.jstorm.util.KafkaProducerUtil;
+import com.cqx.jstorm.utils.GenericRecordUtil;
+import com.cqx.jstorm.utils.KafkaProducerUtil;
 
 import java.util.List;
 import java.util.Map;

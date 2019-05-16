@@ -1,4 +1,4 @@
-package com.cqx.jstorm.util;
+package com.cqx.jstorm.utils;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -24,26 +24,6 @@ public class KafkaProducerUtil<K, V> {
         Properties properties = new Properties();
         properties.load(new FileInputStream(conf));
         init(properties);
-    }
-
-    public static void initKafkaClientJAAS(Map<String, ?> param) {
-        if (param == null) return;
-        String conf = (String) param.get("kafkaConfDir");
-        if (conf == null || conf.length() == 0) return;
-        try {
-            Properties properties = new Properties();
-            properties.load(new FileInputStream(conf));
-            //java.security.auth.login.config 变量设置
-            String propertyAuth = properties.getProperty(SECURITY_AUTH);
-            if (propertyAuth != null && !"".equals(propertyAuth)) {
-                logger.info("System.setProperty，{} is，{}", SECURITY_AUTH, propertyAuth);
-                System.setProperty(SECURITY_AUTH, propertyAuth);
-                properties.remove(SECURITY_AUTH);
-                logger.info("{} remove from properties file.", SECURITY_AUTH);
-            }
-        } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-        }
     }
 
     public void init(Properties properties) {

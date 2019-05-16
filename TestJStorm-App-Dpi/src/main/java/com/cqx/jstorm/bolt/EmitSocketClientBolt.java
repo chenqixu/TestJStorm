@@ -2,9 +2,8 @@ package com.cqx.jstorm.bolt;
 
 import backtype.storm.task.TopologyContext;
 import backtype.storm.tuple.Tuple;
-import com.cqx.jstorm.bolt.IBolt;
 import com.cqx.jstorm.util.AppConst;
-import com.cqx.jstorm.util.DpiSocketClient;
+import com.cqx.jstorm.utils.DpiSocketClient;
 
 import java.util.Map;
 

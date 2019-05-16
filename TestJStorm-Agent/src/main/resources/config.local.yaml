@@ -74,3 +74,6 @@ param:
       sinkField: xdr_id,imsi,imei,msisdn,user_ip,tac,eci,apn,app_type_code,procedure_start_time,delay_time,procedure_end_time,app_class_top,app_class,source_port,server_ip,destination_port,upbytes,downbytes,up_packet,down_packet,ul_tcp_disordered_packets,dl_tcp_disordered_packets,ul_tcp_retransmission_packets,dl_tcp_retransmission_packets,ul_ip_frag_packets,dl_ip_frag_packets,url,user_agent,rtp_server_ip,s_year,s_month,s_day,s_hour,apply_name,web_classify,web_name,apply_classify,user_ipv6,app_server_ipv6,filename
       rtmField:
       topic:
+
+classload:
+  - "com.cqx.jstorm.utils.KafkaClientJAASLoader"
