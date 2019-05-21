@@ -32,6 +32,8 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class EmitDpiSpout extends ISpout {
 
+    public static final String SOURDIR = "sourDir";
+    public static final String BACKDIR = "backDir";
     public static final String KEYWORD = "keyword";
     public static final String VALUES = "values";
     public static final int MAXQUEUENUM = 50;
@@ -46,14 +48,14 @@ public class EmitDpiSpout extends ISpout {
     private String backDir;
 
     @Override
-    protected void open(Map conf, TopologyContext context) throws Exception {
+    public void open(Map conf, TopologyContext context) throws Exception {
         fileUtils = new FileUtils();
         queueMap = new HashMap<>();
         scanQueue = new LinkedBlockingQueue<>();
         // 获取配置
         boltNum = Integer.valueOf(conf.get("bolt_num").toString());
-        sourDir = (String) conf.get(AppConst.SOURDIR);
-        backDir = (String) conf.get(AppConst.BACKDIR);
+        sourDir = (String) conf.get(SOURDIR);
+        backDir = (String) conf.get(BACKDIR);
         typeDefList = TypeDef.parser(conf.get(AppConst.TYPEDEFS));
         logger.info("sourDir：{}，backDir：{}，bolt_num：{}，typeDefList：{}",
                 sourDir, backDir, boltNum, typeDefList);
@@ -65,7 +67,7 @@ public class EmitDpiSpout extends ISpout {
     }
 
     @Override
-    protected void nextTuple() throws Exception {
+    public void nextTuple() throws Exception {
         // 先判断上次扫描队列是否需要再次扫描
         if (scanQueue.size() <= MAXSCANQUEUENUM && getQueueMapSize() <= MAXSCANQUEUENUM) {
             logger.info("触发扫描，scanQueue.size()：{}", scanQueue.size());
@@ -120,7 +122,7 @@ public class EmitDpiSpout extends ISpout {
     }
 
     @Override
-    protected void ack(Object object) {
+    public void ack(Object object) {
         logger.info("ack object：{}", object);
         if (object instanceof EmitDpiMessageId) {
             EmitDpiMessageId emitDpiMessageId = (EmitDpiMessageId) object;

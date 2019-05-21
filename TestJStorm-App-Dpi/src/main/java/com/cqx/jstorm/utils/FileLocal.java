@@ -6,20 +6,20 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 
 /**
- * FileLocalBack
+ * FileLocal
  *
  * @author chenqixu
  */
-public class FileLocalBack {
+public class FileLocal {
     public static final String newLine = System.getProperty("line.separator");
     public static final String fileSparator = File.separator;
     public static final String writeCode = "UTF-8";
-    private static Logger logger = LoggerFactory.getLogger(FileLocalBack.class);
+    private static Logger logger = LoggerFactory.getLogger(FileLocal.class);
     private String finalFileName;
     private File localBack;
     private BufferedWriter bw;
 
-    public FileLocalBack(String fileName, String localBackPath) {
+    public FileLocal(String fileName, String localBackPath) {
         if (localBackPath.endsWith(fileSparator)) finalFileName = localBackPath + fileName;
         else finalFileName = localBackPath + fileSparator + fileName;
     }

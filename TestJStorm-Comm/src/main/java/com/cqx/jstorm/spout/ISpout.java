@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public abstract class ISpout implements Serializable {
 
-    public static final Logger logger = LoggerFactory.getLogger(ISpout.class);
+    private static final Logger logger = LoggerFactory.getLogger(ISpout.class);
     protected SpoutOutputCollector collector;
     private TopologyContext context;
     private AtomicInteger batchIndex;
@@ -40,21 +40,21 @@ public abstract class ISpout implements Serializable {
         this.collector = collector;
     }
 
-    protected abstract void open(Map conf, TopologyContext context) throws Exception;
+    public abstract void open(Map conf, TopologyContext context) throws Exception;
 
-    protected abstract void nextTuple() throws Exception;
+    public abstract void nextTuple() throws Exception;
 
     protected void declareOutputFields(OutputFieldsDeclarer declarer) {
         declarer.declare(new Fields(AppConst.FIELDS));
     }
 
-    protected void ack(Object object) {
+    public void ack(Object object) {
     }
 
-    protected void fail(Object object) {
+    public void fail(Object object) {
     }
 
-    protected void close() {
+    public void close() {
     }
 
     public String grenerateMessageId() {

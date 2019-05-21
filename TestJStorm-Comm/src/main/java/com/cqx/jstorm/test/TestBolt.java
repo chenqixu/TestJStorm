@@ -27,6 +27,7 @@ public class TestBolt {
         appConst = YamlParser.builder().parserConf(conf);
         context = TestTopologyContext.builder(appConst.getParamBean());
         stormConf = appConst.getParamBean();
+        if (iBolt != null) iBolt.setCollector(TestOutputCollector.build());
     }
 
     protected Tuple buildTuple(String filed, String value) {

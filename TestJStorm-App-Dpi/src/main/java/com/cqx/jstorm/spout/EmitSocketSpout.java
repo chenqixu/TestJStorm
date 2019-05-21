@@ -1,7 +1,8 @@
 package com.cqx.jstorm.spout;
 
 import backtype.storm.task.TopologyContext;
-import com.cqx.jstorm.spout.ISpout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,6 +21,7 @@ public class EmitSocketSpout extends ISpout {
     public static final String FILE_BASE_PATH;
     public static final String PATH_NAME_DATA_SERVERSOCKET_EXCEPTION = "dataServersocketException";
     public static final String FIELD_PORT = "port";
+    private static Logger logger = LoggerFactory.getLogger(EmitSocketSpout.class);
     private static Properties props = new Properties();
 
     static {
@@ -43,13 +45,13 @@ public class EmitSocketSpout extends ISpout {
     }
 
     @Override
-    protected void open(Map conf, TopologyContext context) throws Exception {
+    public void open(Map conf, TopologyContext context) throws Exception {
         logger.info("####open");
         logger.info("SOCKET_RECEIVE_PORT：{}，SOCKET_SEND_PORT：{}，FILE_BASE_PATH：{}", SOCKET_RECEIVE_PORT, SOCKET_SEND_PORT, FILE_BASE_PATH);
     }
 
     @Override
-    protected void nextTuple() throws Exception {
+    public void nextTuple() throws Exception {
         logger.info("####not submit nextTuple");
     }
 }

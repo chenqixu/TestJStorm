@@ -15,12 +15,12 @@ import java.util.Map;
 public class EmitGroupingSpout extends ISpout {
 
     @Override
-    protected void open(Map conf, TopologyContext context) {
+    public void open(Map conf, TopologyContext context) {
 
     }
 
     @Override
-    protected void nextTuple() {
+    public void nextTuple() {
 
     }
 

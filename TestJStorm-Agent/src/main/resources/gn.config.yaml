@@ -1,0 +1,171 @@
+jstorm:
+  nimbus_host: 10.1.8.203
+  nimbus_thrift_port: 17627
+  storm_zookeeper_servers:
+    - "10.1.8.198"
+    - "10.1.4.185"
+    - "10.1.4.186"
+  storm_zookeeper_port: 2183
+  storm_zookeeper_root: /udap/collect_jstorm
+
+topology:
+  worker_num: 1
+  ack_num: 1
+  worker_memory: 1024
+  name: DpiParserGN
+  ip: 127.0.0.1
+
+spout:
+  name: DpiParserSpout
+  packagename: com.newland.storm.etl.dpi.spout
+  parall: 1
+
+bolt:
+  - name: DpiParserBolt
+    packagename: com.newland.storm.etl.dpi.bolt
+    parall: 1
+    groupingcode: LOCALFIRSTGROUPING
+    componentId: DpiParserSpout
+    streamId:
+  - name: DpiParserErrorBolt
+    packagename: com.newland.storm.etl.dpi.bolt
+    parall: 1
+    groupingcode: LOCALFIRSTGROUPING
+    componentId: DpiParserBolt
+    streamId: err
+  - name: DpiParserKafkaBolt
+    packagename: com.newland.storm.etl.dpi.bolt
+    parall: 1
+    groupingcode: LOCALFIRSTGROUPING
+    componentId: DpiParserBolt
+    streamId: kafka
+
+param:
+  template_id: "fjbi_jstorm_gn"
+  sourDir: "/bi/dataprocess/stream/gn/streaminput"
+  backDir: "/bi/dataprocess/stream/gn/streambackup"
+  sinkDir: "/bi/dataprocess/stream/gn/streamoutput"
+  tempDir: "/bi/dataprocess/stream/gn/streamtmp"
+  errorDir: "/bi/dataprocess/stream/gn/errdata"
+  separator: "\\|"
+  senddpiseparator: "\\|"
+  dateLocal: "3"
+  nameSeparator: "_"
+  bolt_num: "1"
+  dpi_ports: "6795"
+  kafkaConfDir: "D:/Work/CVS/BI/JavaSourceCode/product/EDC-CODE/edc-bigdata/edc-bigdata-component/nl-real-time-computation/nl-rt-jstorm-fujianbi-dpi/src/main/resources/producer.properties"
+  schemaUrl: "http://10.1.2.212:18061/SchemaService/getSchema?t="
+  typedefs:
+    - name: pdp
+      keyWord: PDP
+      isDpi: false
+      value: city,interface,imsi,imei,msisdn,user_ip,lac,rac,cid,sgsn_c_ip,sgsn_u_ip,ggsn_c_ip,ggsn_u_ip,rat,apn,sgsn_port,ggsn_port,xdr_type_code,procedure_id,msg_type,start_time,rsq_cnt,result_code,dura,gtp_protocol,initiator,sgsn_c_teid,sgsn_u_teid,ggsn_c_teid,ggsn_u_teid,charge_id,terminal_man,terminal_type
+      dpirequestField: 
+      hwField: 
+      sinkField: city,interface,imsi,imei,msisdn,user_ip,lac,rac,cid,sgsn_c_ip,sgsn_u_ip,ggsn_c_ip,ggsn_u_ip,rat,apn,sgsn_port,ggsn_port,xdr_type_code,procedure_id,msg_type,start_time,rsq_cnt,result_code,dura,gtp_protocol,initiator,sgsn_c_teid,sgsn_u_teid,ggsn_c_teid,ggsn_u_teid,charge_id,terminal_man,terminal_type
+      rtmField: 
+      rtmkey: 
+      topic: 
+    - name: ip
+      keyWord: IP
+      isDpi: true
+      value: city,interface,imsi,imei,msisdn,user_ip,lac,rac,cid,sgsn_c_ip,sgsn_u_ip,ggsn_c_ip,ggsn_u_ip,rat,apn,sgsn_port,ggsn_port,xdr_type_code,procedure_id,ip_id,start_time,end_time,appbigclass,appsmallclass,service_name,l4_protocol,business_bearer_type,userport,serverip,serverport,country_id,network_id,upflow,downflow,dura,dura_1,upspeed,downspeed,up_ip_pac,down_ip_pac,business_conduct_code,business_finish_code,business_delay,up_tcp_outorder_packets,down_tcp_outorder_packets,up_tcp_resend_packets,down_tcp_resend_packets,ul_ip_frag_packets,dl_ip_frag_packets,tcp_builtchain_res_delay,tcp_builtchain_con_delay,tcp_builtchain_firstrep_delay,firstreq_firstrep_delay,window_size,mss_size,tcp_builtchain_trytime,tcp_conn_stat,session_if_end,charge_id,terminal_man,terminal_type
+      dpirequestField: msisdn,appbigclass,appsmallclass,lac,cid,imei,unknow,start_time,end_time,serverip,serverport,unknow,unknow,unknow,unknow,upflow,downflow,city,imsi,unknow,unknow,business_bearer_type,country_id,unknow,unknow,rac,service_name,unknow,upspeed,downspeed
+      hwField: label,apply_classify,apply_name,web_classify,web_name,search_keyword,urlmd5,parser_tag
+      sinkField: city,interface,imsi,imei,msisdn,user_ip,lac,rac,cid,sgsn_c_ip,sgsn_u_ip,ggsn_c_ip,ggsn_u_ip,rat,apn,sgsn_port,ggsn_port,xdr_type_code,procedure_id,ip_id,start_time,end_time,appbigclass,appsmallclass,service_name,l4_protocol,business_bearer_type,userport,serverip,serverport,country_id,network_id,upflow,downflow,dura,dura_1,upspeed,downspeed,up_ip_pac,down_ip_pac,business_conduct_code,business_finish_code,business_delay,up_tcp_outorder_packets,down_tcp_outorder_packets,up_tcp_resend_packets,down_tcp_resend_packets,ul_ip_frag_packets,dl_ip_frag_packets,tcp_builtchain_res_delay,tcp_builtchain_con_delay,tcp_builtchain_firstrep_delay,firstreq_firstrep_delay,window_size,mss_size,tcp_builtchain_trytime,tcp_conn_stat,session_if_end,charge_id,terminal_man,terminal_type,apply_classify,apply_name,label,web_classify,web_name,search_keyword,urlmd5,parser_tag
+      rtmField: 
+      rtmkey: 
+      topic: 
+    - name: dns
+      keyWord: DNS
+      isDpi: false
+      value: city,interface,imsi,imei,msisdn,user_ip,lac,rac,cid,sgsn_c_ip,sgsn_u_ip,ggsn_c_ip,ggsn_u_ip,rat,apn,sgsn_port,ggsn_port,xdr_type_code,procedure_id,ip_id,start_time,end_time,appbigclass,appsmallclass,service_name,l4_protocol,userport,serverip,serverport,country_id,network_id,upflow,downflow,dura,upspeed,downspeed,up_ip_pac,down_ip_pac,business_conduct_code,business_finish_code,business_delay,up_tcp_outorder_packets,down_tcp_outorder_packets,up_tcp_resend_packets,down_tcp_resend_packets,ul_ip_frag_packets,dl_ip_frag_packets,dns,results_ip,dns_response_code,dns_requests_cnt,response_cnt,authoriza_content_num,add_content_num,charge_id,terminal_man,terminal_type
+      dpirequestField: 
+      hwField: 
+      sinkField: city,interface,imsi,imei,msisdn,user_ip,lac,rac,cid,sgsn_c_ip,sgsn_u_ip,ggsn_c_ip,ggsn_u_ip,rat,apn,sgsn_port,ggsn_port,xdr_type_code,procedure_id,ip_id,start_time,end_time,appbigclass,appsmallclass,service_name,l4_protocol,userport,serverip,serverport,country_id,network_id,upflow,downflow,dura,upspeed,downspeed,up_ip_pac,down_ip_pac,business_conduct_code,business_finish_code,business_delay,up_tcp_outorder_packets,down_tcp_outorder_packets,up_tcp_resend_packets,down_tcp_resend_packets,ul_ip_frag_packets,dl_ip_frag_packets,dns,results_ip,dns_response_code,dns_requests_cnt,response_cnt,authoriza_content_num,add_content_num,charge_id,terminal_man,terminal_type
+      rtmField: 
+      rtmkey: 
+      topic: 
+    - name: mms
+      keyWord: MMS
+      isDpi: false
+      value: city,interface,imsi,imei,msisdn,user_ip,lac,rac,cid,sgsn_c_ip,sgsn_u_ip,ggsn_c_ip,ggsn_u_ip,rat,apn,sgsn_port,ggsn_port,xdr_type_code,procedure_id,ip_id,start_time,end_time,appbigclass,appsmallclass,service_name,l4_protocol,userport,serverip,serverport,country_id,network_id,upflow,downflow,dura,upspeed,downspeed,up_ip_pac,down_ip_pac,business_conduct_code,business_finish_code,business_delay,up_tcp_outorder_packets,down_tcp_outorder_packets,up_tcp_resend_packets,down_tcp_resend_packets,ul_ip_frag_packets,dl_ip_frag_packets,first_tcp_success_delay,second_tcp_success_delay,first_answer_delay,trans_type,success_flag,http_or_wap1,http_wap_code,mmse_rsp_status,mms_send_addr,mms_msg_id,mms_transaction_id,mms_retrive_addr,mms_retrive_addr_num,mms_cc_bcc_addr,mms_cc_bcc_addr_num,mms_subject,mms_data_size,mmsc_add,host,uri,x_online_host,charge_id,terminal_man,terminal_type
+      dpirequestField: 
+      hwField: 
+      sinkField: city,interface,imsi,imei,msisdn,user_ip,lac,rac,cid,sgsn_c_ip,sgsn_u_ip,ggsn_c_ip,ggsn_u_ip,rat,apn,sgsn_port,ggsn_port,xdr_type_code,procedure_id,ip_id,start_time,end_time,appbigclass,appsmallclass,service_name,l4_protocol,userport,serverip,serverport,country_id,network_id,upflow,downflow,dura,upspeed,downspeed,up_ip_pac,down_ip_pac,business_conduct_code,business_finish_code,business_delay,up_tcp_outorder_packets,down_tcp_outorder_packets,up_tcp_resend_packets,down_tcp_resend_packets,ul_ip_frag_packets,dl_ip_frag_packets,first_tcp_success_delay,second_tcp_success_delay,first_answer_delay,trans_type,success_flag,http_or_wap1,http_wap_code,mmse_rsp_status,mms_send_addr,mms_msg_id,mms_transaction_id,mms_retrive_addr,mms_retrive_addr_num,mms_cc_bcc_addr,mms_cc_bcc_addr_num,mms_subject,mms_data_size,mmsc_add,host,uri,x_online_host,charge_id,terminal_man,terminal_type
+      rtmField: 
+      rtmkey: 
+      topic: 
+    - name: http
+      keyWord: HTTP
+      isDpi: true
+      value: city,interface,imsi,imei,msisdn,user_ip,lac,rac,cid,sgsn_c_ip,sgsn_u_ip,ggsn_c_ip,ggsn_u_ip,rat,apn,sgsn_port,ggsn_port,xdr_type_code,procedure_id,ip_id,start_time,end_time,appbigclass,appsmallclass,service_name,l4_protocol,userport,serverip,serverport,country_id,network_id,upflow,downflow,dura,dura_1,upspeed,downspeed,up_ip_pac,down_ip_pac,business_conduct_code,business_finish_code,business_delay,browser,portal_appset,up_tcp_outorder_packets,down_tcp_outorder_packets,up_tcp_resend_packets,down_tcp_resend_packets,ul_ip_frag_packets,dl_ip_frag_packets,thingtype,thingrep,http_version,firsthttp_repdelay,lasthttp_contentdelay,lastack_confirmdelay,host,uri,x_online_host,user_agent,http_content_type,refer_uri,cookie,content_length,target_behavior,wtp_interrupt_type,wtp_interrupt_reason,title,key_word,charge_id,terminal_man,terminal_type
+      dpirequestField: msisdn,appbigclass,appsmallclass,lac,cid,imei,unknow,start_time,end_time,serverip,serverport,user_agent,uri,host,http_content_type,upflow,downflow,city,imsi,unknow,unknow,unknow,country_id,refer_uri,unknow,rac,service_name,target_behavior,upspeed,downspeed
+      hwField: label,apply_classify,apply_name,web_classify,web_name,search_keyword,urlmd5,parser_tag
+      sinkField: city,interface,imsi,imei,msisdn,user_ip,lac,rac,cid,sgsn_c_ip,sgsn_u_ip,ggsn_c_ip,ggsn_u_ip,rat,apn,sgsn_port,ggsn_port,xdr_type_code,procedure_id,ip_id,start_time,end_time,appbigclass,appsmallclass,service_name,l4_protocol,userport,serverip,serverport,country_id,network_id,upflow,downflow,dura,dura_1,upspeed,downspeed,up_ip_pac,down_ip_pac,business_conduct_code,business_finish_code,business_delay,browser,portal_appset,up_tcp_outorder_packets,down_tcp_outorder_packets,up_tcp_resend_packets,down_tcp_resend_packets,ul_ip_frag_packets,dl_ip_frag_packets,thingtype,thingrep,http_version,firsthttp_repdelay,lasthttp_contentdelay,lastack_confirmdelay,host,uri,x_online_host,user_agent,http_content_type,refer_uri,cookie,content_length,target_behavior,wtp_interrupt_type,wtp_interrupt_reason,title,key_word,charge_id,terminal_man,terminal_type,label,apply_classify,apply_name,web_classify,web_name,search_keyword,urlmd5,parser_tag
+      rtmField: city,imsi,imei,msisdn,lac,cid,start_time,apply_classify,apply_name,service_name,uri,web_classify,web_name,search_keyword,host,rat
+      rtmkey: msisdn
+      topic: nmc_tb_gn_http
+    - name: ftp
+      keyWord: FTP
+      isDpi: false
+      value: city,interface,imsi,imei,msisdn,user_ip,lac,rac,cid,sgsn_c_ip,sgsn_u_ip,ggsn_c_ip,ggsn_u_ip,rat,apn,sgsn_port,ggsn_port,xdr_type_code,procedure_id,ip_id,start_time,end_time,appbigclass,appsmallclass,service_name,l4_protocol,userport,serverip,serverport,country_id,network_id,upflow,downflow,dura,upspeed,downspeed,up_ip_pac,down_ip_pac,business_conduct_code,business_finish_code,business_delay,up_tcp_outorder_packets,down_tcp_outorder_packets,up_tcp_resend_packets,down_tcp_resend_packets,ul_ip_frag_packets,dl_ip_frag_packets,ftp_status,login_user,loc_dir,trans_mode,trans_direction,file_name,local_port,remote_port,file_total_size,response_delay,charge_id,terminal_man,terminal_type
+      dpirequestField: 
+      hwField: 
+      sinkField: city,interface,imsi,imei,msisdn,user_ip,lac,rac,cid,sgsn_c_ip,sgsn_u_ip,ggsn_c_ip,ggsn_u_ip,rat,apn,sgsn_port,ggsn_port,xdr_type_code,procedure_id,ip_id,start_time,end_time,appbigclass,appsmallclass,service_name,l4_protocol,userport,serverip,serverport,country_id,network_id,upflow,downflow,dura,upspeed,downspeed,up_ip_pac,down_ip_pac,business_conduct_code,business_finish_code,business_delay,up_tcp_outorder_packets,down_tcp_outorder_packets,up_tcp_resend_packets,down_tcp_resend_packets,ul_ip_frag_packets,dl_ip_frag_packets,ftp_status,login_user,loc_dir,trans_mode,trans_direction,file_name,local_port,remote_port,file_total_size,response_delay,charge_id,terminal_man,terminal_type
+      rtmField: 
+      rtmkey: 
+      topic: 
+    - name: mail
+      keyWord: MAIL
+      isDpi: false
+      value: city,interface,imsi,imei,msisdn,user_ip,lac,rac,cid,sgsn_c_ip,sgsn_u_ip,ggsn_c_ip,ggsn_u_ip,rat,apn,sgsn_port,ggsn_port,xdr_type_code,procedure_id,ip_id,start_time,end_time,appbigclass,appsmallclass,service_name,l4_protocol,userport,serverip,serverport,country_id,network_id,upflow,downflow,dura,upspeed,downspeed,up_ip_pac,down_ip_pac,business_conduct_code,business_finish_code,business_delay,up_tcp_outorder_packets,down_tcp_outorder_packets,up_tcp_resend_packets,down_tcp_resend_packets,ul_ip_frag_packets,dl_ip_frag_packets,email_type,return_status_code,user_name,sender_info,email_long,smtp_domain,receive_user,email_header_info,access_mode,charge_id,terminal_man,terminal_type
+      dpirequestField: 
+      hwField: 
+      sinkField: city,interface,imsi,imei,msisdn,user_ip,lac,rac,cid,sgsn_c_ip,sgsn_u_ip,ggsn_c_ip,ggsn_u_ip,rat,apn,sgsn_port,ggsn_port,xdr_type_code,procedure_id,ip_id,start_time,end_time,appbigclass,appsmallclass,service_name,l4_protocol,userport,serverip,serverport,country_id,network_id,upflow,downflow,dura,upspeed,downspeed,up_ip_pac,down_ip_pac,business_conduct_code,business_finish_code,business_delay,up_tcp_outorder_packets,down_tcp_outorder_packets,up_tcp_resend_packets,down_tcp_resend_packets,ul_ip_frag_packets,dl_ip_frag_packets,email_type,return_status_code,user_name,sender_info,email_long,smtp_domain,receive_user,email_header_info,access_mode,charge_id,terminal_man,terminal_type
+      rtmField: 
+      rtmkey: 
+      topic: 
+    - name: voip
+      keyWord: VOIP
+      isDpi: false
+      value: city,interface,imsi,imei,msisdn,user_ip,lac,rac,cid,sgsn_c_ip,sgsn_u_ip,ggsn_c_ip,ggsn_u_ip,rat,apn,sgsn_port,ggsn_port,xdr_type_code,procedure_id,ip_id,start_time,end_time,appbigclass,appsmallclass,service_name,l4_protocol,userport,serverip,serverport,country_id,network_id,upflow,downflow,dura,upspeed,downspeed,up_ip_pac,down_ip_pac,business_conduct_code,business_finish_code,business_delay,up_tcp_outorder_packets,down_tcp_outorder_packets,up_tcp_resend_packets,down_tcp_resend_packets,ul_ip_frag_packets,dl_ip_frag_packets,call_mode,calling_nbr,called_nbr,call_type,voip_data_flux,hang_reason,protocol_type,charge_id,terminal_man,terminal_type
+      dpirequestField: 
+      hwField: 
+      sinkField: city,interface,imsi,imei,msisdn,user_ip,lac,rac,cid,sgsn_c_ip,sgsn_u_ip,ggsn_c_ip,ggsn_u_ip,rat,apn,sgsn_port,ggsn_port,xdr_type_code,procedure_id,ip_id,start_time,end_time,appbigclass,appsmallclass,service_name,l4_protocol,userport,serverip,serverport,country_id,network_id,upflow,downflow,dura,upspeed,downspeed,up_ip_pac,down_ip_pac,business_conduct_code,business_finish_code,business_delay,up_tcp_outorder_packets,down_tcp_outorder_packets,up_tcp_resend_packets,down_tcp_resend_packets,ul_ip_frag_packets,dl_ip_frag_packets,call_mode,calling_nbr,called_nbr,call_type,voip_data_flux,hang_reason,protocol_type,charge_id,terminal_man,terminal_type
+      rtmField: 
+      rtmkey: 
+      topic: 
+    - name: rtsp
+      keyWord: RTSP
+      isDpi: true
+      value: city,interface,imsi,imei,msisdn,user_ip,lac,rac,cid,sgsn_c_ip,sgsn_u_ip,ggsn_c_ip,ggsn_u_ip,rat,apn,sgsn_port,ggsn_port,xdr_type_code,procedure_id,ip_id,start_time,end_time,appbigclass,appsmallclass,service_name,l4_protocol,userport,serverip,serverport,country_id,network_id,upflow,downflow,dura,upspeed,downspeed,up_ip_pac,down_ip_pac,business_conduct_code,business_finish_code,business_delay,up_tcp_outorder_packets,down_tcp_outorder_packets,up_tcp_resend_packets,down_tcp_resend_packets,ul_ip_frag_packets,dl_ip_frag_packets,url,user_agent,rtp_serverip,rtp_client_startport,rtp_client_endport,rtp_server_startport,rtp_server_endport,rtsp_session_video,rtsp_session_audio,resp_delay,charge_id,terminal_man,terminal_type
+      dpirequestField: msisdn,appbigclass,appsmallclass,lac,cid,imei,unknow,start_time,end_time,serverip,serverport,user_agent,url,unknow,unknow,upflow,downflow,city,imsi,unknow,unknow,unknow,country_id,unknow,unknow,rac,service_name,unknow,upspeed,downspeed
+      hwField: label,apply_classify,apply_name,web_classify,web_name,search_keyword,urlmd5,parser_tag
+      sinkField: city,interface,imsi,imei,msisdn,user_ip,lac,rac,cid,sgsn_c_ip,sgsn_u_ip,ggsn_c_ip,ggsn_u_ip,rat,apn,sgsn_port,ggsn_port,xdr_type_code,procedure_id,ip_id,start_time,end_time,appbigclass,appsmallclass,service_name,l4_protocol,userport,serverip,serverport,country_id,network_id,upflow,downflow,dura,upspeed,downspeed,up_ip_pac,down_ip_pac,business_conduct_code,business_finish_code,business_delay,up_tcp_outorder_packets,down_tcp_outorder_packets,up_tcp_resend_packets,down_tcp_resend_packets,ul_ip_frag_packets,dl_ip_frag_packets,url,user_agent,rtp_serverip,rtp_client_startport,rtp_client_endport,rtp_server_startport,rtp_server_endport,rtsp_session_video,rtsp_session_audio,resp_delay,charge_id,terminal_man,terminal_type,label,apply_classify,apply_name,web_classify,web_name,search_keyword,urlmd5,parser_tag
+      rtmField: 
+      rtmkey: 
+      topic: 
+    - name: im
+      keyWord: IM
+      isDpi: false
+      value: city,interface,imsi,imei,msisdn,user_ip,lac,rac,cid,sgsn_c_ip,sgsn_u_ip,ggsn_c_ip,ggsn_u_ip,rat,apn,sgsn_port,ggsn_port,xdr_type_code,procedure_id,ip_id,start_time,end_time,appbigclass,appsmallclass,service_name,l4_protocol,userport,serverip,serverport,country_id,network_id,upflow,downflow,dura,upspeed,downspeed,up_ip_pac,down_ip_pac,business_conduct_code,business_finish_code,business_delay,up_tcp_outorder_packets,down_tcp_outorder_packets,up_tcp_resend_packets,down_tcp_resend_packets,ul_ip_frag_packets,dl_ip_frag_packets,login_user,versions,client_type,oper_type,charge_id,terminal_man,terminal_type
+      dpirequestField: 
+      hwField: 
+      sinkField: city,interface,imsi,imei,msisdn,user_ip,lac,rac,cid,sgsn_c_ip,sgsn_u_ip,ggsn_c_ip,ggsn_u_ip,rat,apn,sgsn_port,ggsn_port,xdr_type_code,procedure_id,ip_id,start_time,end_time,appbigclass,appsmallclass,service_name,l4_protocol,userport,serverip,serverport,country_id,network_id,upflow,downflow,dura,upspeed,downspeed,up_ip_pac,down_ip_pac,business_conduct_code,business_finish_code,business_delay,up_tcp_outorder_packets,down_tcp_outorder_packets,up_tcp_resend_packets,down_tcp_resend_packets,ul_ip_frag_packets,dl_ip_frag_packets,login_user,versions,client_type,oper_type,charge_id,terminal_man,terminal_type
+      rtmField: 
+      rtmkey: 
+      topic: 
+    - name: p2p
+      keyWord: P2P
+      isDpi: false
+      value: city,interface,imsi,imei,msisdn,user_ip,lac,rac,cid,sgsn_c_ip,sgsn_u_ip,ggsn_c_ip,ggsn_u_ip,rat,apn,sgsn_port,ggsn_port,xdr_type_code,procedure_id,ip_id,start_time,end_time,appbigclass,appsmallclass,service_name,l4_protocol,userport,serverip,serverport,country_id,network_id,upflow,downflow,dura,upspeed,downspeed,up_ip_pac,down_ip_pac,business_conduct_code,business_finish_code,business_delay,up_tcp_outorder_packets,down_tcp_outorder_packets,up_tcp_resend_packets,down_tcp_resend_packets,ul_ip_frag_packets,dl_ip_frag_packets,file_size,p2p_id,tracker,charge_id,terminal_man,terminal_type
+      dpirequestField: 
+      hwField: 
+      sinkField: city,interface,imsi,imei,msisdn,user_ip,lac,rac,cid,sgsn_c_ip,sgsn_u_ip,ggsn_c_ip,ggsn_u_ip,rat,apn,sgsn_port,ggsn_port,xdr_type_code,procedure_id,ip_id,start_time,end_time,appbigclass,appsmallclass,service_name,l4_protocol,userport,serverip,serverport,country_id,network_id,upflow,downflow,dura,upspeed,downspeed,up_ip_pac,down_ip_pac,business_conduct_code,business_finish_code,business_delay,up_tcp_outorder_packets,down_tcp_outorder_packets,up_tcp_resend_packets,down_tcp_resend_packets,ul_ip_frag_packets,dl_ip_frag_packets,file_size,p2p_id,tracker,charge_id,terminal_man,terminal_type
+      rtmField: 
+      rtmkey: 
+      topic: 
+
+classload:
+  - "com.newland.storm.etl.dpi.utils.KafkaClientJAASLoader"

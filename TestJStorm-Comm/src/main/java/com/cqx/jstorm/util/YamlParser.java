@@ -55,8 +55,7 @@ public class YamlParser {
         // nimbus thrift端口
         conf.put(Config.NIMBUS_THRIFT_PORT, Integer.valueOf(appConst.getJstormBean().getNimbus_thrift_port()));
         // zookeeper地址
-        conf.put(Config.STORM_ZOOKEEPER_SERVERS, Arrays.asList(new String[]{
-                appConst.getJstormBean().getStorm_zookeeper_servers()}));
+        conf.put(Config.STORM_ZOOKEEPER_SERVERS, appConst.getJstormBean().getStorm_zookeeper_servers());
         // zookeeper端口
         conf.put(Config.STORM_ZOOKEEPER_PORT, appConst.getJstormBean().getStorm_zookeeper_port());
         // zookeeper上jstorm路径

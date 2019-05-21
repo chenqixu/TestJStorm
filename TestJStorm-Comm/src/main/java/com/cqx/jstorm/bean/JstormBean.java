@@ -1,5 +1,6 @@
 package com.cqx.jstorm.bean;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -10,7 +11,7 @@ import java.util.Map;
 public class JstormBean {
     private String nimbus_host;
     private int nimbus_thrift_port;
-    private String storm_zookeeper_servers;
+    private List<String> storm_zookeeper_servers;
     private int storm_zookeeper_port;
     private String storm_zookeeper_root;
 
@@ -22,7 +23,7 @@ public class JstormBean {
         Map<String, ?> tmp = (Map<String, ?>) param;
         nimbus_host = (String) tmp.get("nimbus_host");
         nimbus_thrift_port = (Integer) tmp.get("nimbus_thrift_port");
-        storm_zookeeper_servers = (String) tmp.get("storm_zookeeper_servers");
+        storm_zookeeper_servers = (List) tmp.get("storm_zookeeper_servers");
         storm_zookeeper_port = (Integer) tmp.get("storm_zookeeper_port");
         storm_zookeeper_root = (String) tmp.get("storm_zookeeper_root");
         return this;
@@ -44,11 +45,11 @@ public class JstormBean {
         this.nimbus_thrift_port = nimbus_thrift_port;
     }
 
-    public String getStorm_zookeeper_servers() {
+    public List<String> getStorm_zookeeper_servers() {
         return storm_zookeeper_servers;
     }
 
-    public void setStorm_zookeeper_servers(String storm_zookeeper_servers) {
+    public void setStorm_zookeeper_servers(List<String> storm_zookeeper_servers) {
         this.storm_zookeeper_servers = storm_zookeeper_servers;
     }
 

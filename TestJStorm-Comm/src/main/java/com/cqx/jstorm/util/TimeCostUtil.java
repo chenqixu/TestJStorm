@@ -14,7 +14,7 @@ public class TimeCostUtil {
         start = System.currentTimeMillis();
     }
 
-    public void end() {
+    public void stop() {
         end = System.currentTimeMillis();
     }
 
@@ -33,5 +33,10 @@ public class TimeCostUtil {
      */
     public long getCost() {
         return end - start;
+    }
+
+    public long stopAndGet() {
+        stop();
+        return getCost();
     }
 }

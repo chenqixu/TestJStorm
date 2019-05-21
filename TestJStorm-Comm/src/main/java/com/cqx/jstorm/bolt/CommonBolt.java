@@ -6,7 +6,6 @@ import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseRichBolt;
 import backtype.storm.tuple.Tuple;
 import com.cqx.jstorm.util.ExceptionMetrics;
-import com.cqx.jstorm.util.IExceptionDo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,12 +28,8 @@ public class CommonBolt extends BaseRichBolt {
 
     @Override
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
-        this.exceptionMetrics = new ExceptionMetrics(new IExceptionDo() {
-            @Override
-            public void exceptionDo() {
-                cleanup();
-            }
-        });
+        this.exceptionMetrics = ExceptionMetrics.getInstance();
+        this.exceptionMetrics.registerBolt(iBolt);
         this.iBolt.setCollector(collector);
         try {
             this.iBolt.prepare(stormConf, context);

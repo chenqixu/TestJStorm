@@ -4,6 +4,8 @@ import backtype.storm.task.TopologyContext;
 import backtype.storm.tuple.Tuple;
 import com.cqx.jstorm.util.AppConst;
 import com.cqx.jstorm.util.Utils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -15,10 +17,11 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class EmitTestBolt extends IBolt {
 
+    private static Logger logger = LoggerFactory.getLogger(EmitTestBolt.class);
     private AtomicInteger count = new AtomicInteger(0);
 
     @Override
-    protected void prepare(Map stormConf, TopologyContext context) {
+    public void prepare(Map stormConf, TopologyContext context) {
         logger.info("####prepare");
 //        Utils.sleep(60000);
 //        logger.info("####1 bolt prepare sleep 60000");
@@ -41,11 +44,11 @@ public class EmitTestBolt extends IBolt {
     }
 
     @Override
-    protected void execute(Tuple input) {
+    public void execute(Tuple input) {
         logger.info("####{} to execute，input：{}，count：{}", this, input.getStringByField(AppConst.FIELDS), count.incrementAndGet());
     }
 
-    protected void cleanup() {
+    public void cleanup() {
         logger.info("####{} to cleanup，count：{}",
                 this, count.get());
     }

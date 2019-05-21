@@ -7,6 +7,8 @@ import com.cqx.jstorm.bean.TypeDef;
 import com.cqx.jstorm.util.AppConst;
 import com.cqx.jstorm.utils.GenericRecordUtil;
 import com.cqx.jstorm.utils.KafkaProducerUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -24,6 +26,7 @@ import java.util.Map;
  */
 public class EmitDpiKafkaBolt extends IBolt {
 
+    private static Logger logger = LoggerFactory.getLogger(EmitDpiKafkaBolt.class);
     private String kafkaConfDir;
     private String schemaUrl;
     private GenericRecordUtil genericRecordUtil;
@@ -31,7 +34,7 @@ public class EmitDpiKafkaBolt extends IBolt {
     private KafkaProducerUtil<String, byte[]> kafkaProducerUtil;
 
     @Override
-    protected void prepare(Map stormConf, TopologyContext context) throws Exception {
+    public void prepare(Map stormConf, TopologyContext context) throws Exception {
         logger.info("getThisComponentId：{}，getThisTaskId：{}，getThisTaskIndex：{}",
                 context.getThisComponentId(), context.getThisTaskId(), context.getThisTaskIndex());
         // 从配置中解析所有的TypeDef
@@ -55,7 +58,7 @@ public class EmitDpiKafkaBolt extends IBolt {
     }
 
     @Override
-    protected void execute(Tuple input) throws Exception {
+    public void execute(Tuple input) throws Exception {
         if (input.getSourceStreamId().equals(EmitDpiIBolt.KAFKA_STREAM_ID)) {
             KafkaTuple kafkaTuple = (KafkaTuple) input.getValueByField(EmitDpiIBolt.KAFKA_FIELDS);
             String topic = kafkaTuple.getTopic();
@@ -69,7 +72,7 @@ public class EmitDpiKafkaBolt extends IBolt {
     }
 
     @Override
-    protected void cleanup() {
+    public void cleanup() {
         if (kafkaProducerUtil != null) kafkaProducerUtil.release();
     }
 }

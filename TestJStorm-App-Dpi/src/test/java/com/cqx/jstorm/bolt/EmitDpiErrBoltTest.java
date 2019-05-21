@@ -10,8 +10,8 @@ public class EmitDpiErrBoltTest extends TestBolt {
 
     @Before
     public void setUp() throws Exception {
-        super.prepare(conf);
         iBolt = new EmitDpiErrBolt();
+        super.prepare(conf);
         iBolt.prepare(stormConf, context);
     }
 

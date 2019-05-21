@@ -4,6 +4,8 @@ import backtype.storm.task.TopologyContext;
 import backtype.storm.tuple.Tuple;
 import com.cqx.jstorm.bolt.IBolt;
 import com.cqx.jstorm.util.AppConst;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
@@ -14,8 +16,10 @@ import java.util.Map;
  */
 public class EmitThrowExceptionBolt extends IBolt {
 
+    private static Logger logger = LoggerFactory.getLogger(EmitThrowExceptionBolt.class);
+
     @Override
-    protected void prepare(Map stormConf, TopologyContext context) throws Exception {
+    public void prepare(Map stormConf, TopologyContext context) throws Exception {
         logger.info("####prepare");
         Runtime.getRuntime().addShutdownHook(new Thread("release-shutdown-hook-EmitThrowExceptionBolt：" + this) {
             @Override
@@ -27,13 +31,13 @@ public class EmitThrowExceptionBolt extends IBolt {
     }
 
     @Override
-    protected void execute(Tuple input) throws Exception {
+    public void execute(Tuple input) throws Exception {
         logger.info("####{} to execute，input：{}", this, input.getStringByField(AppConst.FIELDS));
 //        throw new Exception("bolttest throw Exception.");
     }
 
     @Override
-    protected void cleanup() {
+    public void cleanup() {
         logger.info("####{} to_cleanup", this);
     }
 }

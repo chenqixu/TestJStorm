@@ -5,7 +5,6 @@ import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseRichSpout;
 import com.cqx.jstorm.util.ExceptionMetrics;
-import com.cqx.jstorm.util.IExceptionDo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,12 +27,8 @@ public class CommonSpout extends BaseRichSpout {
 
     @Override
     public void open(Map conf, TopologyContext context, SpoutOutputCollector collector) {
-        this.exceptionMetrics = new ExceptionMetrics(new IExceptionDo() {
-            @Override
-            public void exceptionDo() {
-                close();
-            }
-        });
+        this.exceptionMetrics = ExceptionMetrics.getInstance();
+        this.exceptionMetrics.registerSpout(iSpout);
         this.iSpout.setContext(context);
         this.iSpout.setCollector(collector);
         try {

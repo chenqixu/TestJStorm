@@ -18,7 +18,7 @@ import java.util.Map;
  */
 public abstract class IBolt implements Serializable {
 
-    public static final Logger logger = LoggerFactory.getLogger(IBolt.class);
+    private static final Logger logger = LoggerFactory.getLogger(IBolt.class);
     protected OutputCollector collector;
 
     public static IBolt generate(String name) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
@@ -30,13 +30,13 @@ public abstract class IBolt implements Serializable {
         this.collector = collector;
     }
 
-    protected abstract void prepare(Map stormConf, TopologyContext context) throws Exception;
+    public abstract void prepare(Map stormConf, TopologyContext context) throws Exception;
 
-    protected abstract void execute(Tuple input) throws Exception;
+    public abstract void execute(Tuple input) throws Exception;
 
     protected void declareOutputFields(OutputFieldsDeclarer declarer) {
     }
 
-    protected void cleanup() {
+    public void cleanup() {
     }
 }

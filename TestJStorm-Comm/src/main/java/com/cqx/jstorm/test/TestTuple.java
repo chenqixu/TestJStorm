@@ -42,7 +42,7 @@ public class TestTuple implements Tuple {
 
     @Override
     public int size() {
-        return 0;
+        return valueList.size();
     }
 
     @Override

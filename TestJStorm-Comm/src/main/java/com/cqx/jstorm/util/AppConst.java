@@ -18,17 +18,7 @@ public class AppConst {
     public static final String PARAM = "param";
     public static final String CLASSLOAD = "classload";
     public static final String TYPEDEFS = "typedefs";
-    public static final String SPOUT_IMPL_PACKAGE = "com.cqx.jstorm.spout.impl.";
-    public static final String BOLT_IMPL_PACKAGE = "com.cqx.jstorm.bolt.impl.";
     public static final String FIELDS = "common";
-    public static final String SOURDIR = "sourDir";
-    public static final String BACKDIR = "backDir";
-    public static final String SINKDIR = "sinkDir";
-    public static final String TEMPDIR = "tempDir";
-    public static final String ERRORDIR = "errorDir";
-    public static final String SEPARATOR = "separator";
-    public static final String DATELOCAL = "dateLocal";
-    public static final String NAMESEPARATOR = "nameSeparator";
 
     private JstormBean jstormBean;
     private TopologyBean topologyBean;

@@ -17,19 +17,19 @@ public class EmitSocketClientBolt extends IBolt {
     private DpiSocketClient dpiSocketClient;
 
     @Override
-    protected void prepare(Map stormConf, TopologyContext context) throws Exception {
+    public void prepare(Map stormConf, TopologyContext context) throws Exception {
         dpiSocketClient = new DpiSocketClient("127.0.0.1", 10991);
         dpiSocketClient.connect();
     }
 
     @Override
-    protected void execute(Tuple input) throws Exception {
+    public void execute(Tuple input) throws Exception {
         String value = input.getStringByField(AppConst.FIELDS);
         dpiSocketClient.sendMsg(value);
     }
 
     @Override
-    protected void cleanup() {
+    public void cleanup() {
         dpiSocketClient.disconnect();
     }
 }
