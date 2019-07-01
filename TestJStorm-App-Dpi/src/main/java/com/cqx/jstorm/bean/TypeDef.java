@@ -20,6 +20,7 @@ public class TypeDef {
     private String rtmField;// kafka字段
     private String rtmkey;// kafka.key
     private String topic;// 话题
+    private String ruleField;// 预处理规则字段
 
     private String[] sourceFields;
     private String[] hwFields;
@@ -27,6 +28,7 @@ public class TypeDef {
     private String[] dpireceiveFields;
     private String[] sinkFields;
     private String[] rtmFields;
+    private String[] ruleFields;
 
     public static TypeDef newbuilder() {
         return new TypeDef();
@@ -53,6 +55,7 @@ public class TypeDef {
         setRtmField((String) param.get("rtmField"));
         setRtmkey((String) param.get("rtmkey"));
         setTopic((String) param.get("topic"));
+        setRuleField((String) param.get("ruleField"));
         // 分解
         // 分解源字段
         checkValue("源字段", getValue(), false);
@@ -77,6 +80,9 @@ public class TypeDef {
         // 分解入kafka字段
         if (getRtmField() != null && getRtmField().length() > 0)
             setRtmFields(getRtmField().split(",", -1));
+        // 分解预处理规则字段
+        if (getRuleField() != null && getRuleField().length() > 0)
+            setRuleFields(getRuleField().split(",", -1));
         return this;
     }
 
@@ -90,6 +96,11 @@ public class TypeDef {
         } else if (value == null || value.length() == 0) { // 非dpi必填
             throw new NullPointerException(tag + " value is null，please check！");
         }
+    }
+
+    @Override
+    public String toString() {
+        return "[TypeDef]，name：" + name + "，keyWord：" + keyWord + "，isDpi：" + isDpi;
     }
 
     public String getName() {
@@ -218,5 +229,21 @@ public class TypeDef {
 
     public void setHwFields(String[] hwFields) {
         this.hwFields = hwFields;
+    }
+
+    public String getRuleField() {
+        return ruleField;
+    }
+
+    public void setRuleField(String ruleField) {
+        this.ruleField = ruleField;
+    }
+
+    public String[] getRuleFields() {
+        return ruleFields;
+    }
+
+    public void setRuleFields(String[] ruleFields) {
+        this.ruleFields = ruleFields;
     }
 }

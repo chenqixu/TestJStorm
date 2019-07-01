@@ -12,10 +12,12 @@
     <packaging>pom</packaging>
 
     <properties>
-        <slf4j-version>1.7.10</slf4j-version>
+        <!-- <slf4j-version>1.7.10</slf4j-version> -->
         <fastjson.version>1.2.31</fastjson.version>
         <!-- netty.version>3.9.9.Final</netty.version  -->
         <netty.version>5.0.0.Alpha2</netty.version>
+        <logback.version>1.0.13</logback.version>
+        <slf4j.version>1.7.19</slf4j.version>
     </properties>
 
     <build>
@@ -32,18 +34,47 @@
     </build>
 
     <dependencies>
-        <!-- slf4j -->
+        <!-- 日志 -->
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>${slf4j-version}</version>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+            <optional>true</optional>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>${slf4j-version}</version>
+            <version>${slf4j.version}</version>
+            <optional>true</optional>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>log4j-over-slf4j</artifactId>
+            <version>${slf4j.version}</version>
+            <optional>true</optional>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>${slf4j.version}</version>
+            <optional>true</optional>
+            <scope>provided</scope>
+        </dependency>
+        <!--
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+            <scope>provided</scope>
+        </dependency>-->
 
         <!-- jstorm-core核心jar包，需要剔除slf4j和logback -->
         <dependency>

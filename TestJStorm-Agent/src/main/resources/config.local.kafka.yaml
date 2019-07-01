@@ -1,0 +1,46 @@
+jstorm:
+  nimbus_host: 10.1.8.203
+  nimbus_thrift_port: 17627
+  storm_zookeeper_servers:
+    - "10.1.8.198"
+    - "10.1.4.185"
+    - "10.1.4.186"
+  storm_zookeeper_port: 2183
+  storm_zookeeper_root: /udap/collect_jstorm
+
+topology:
+  worker_num: 1
+  ack_num: 1
+  worker_memory: 1073741824
+  cpu_slotNum: 0
+  jvm_options:
+  name: EmitTest
+  ip: 127.0.0.1
+
+spout:
+  name: EmitTestSpout
+  packagename: com.cqx.jstorm.spout
+  parall: 1
+
+bolt:
+  - name: EmitTestBolt
+    packagename: com.cqx.jstorm.bolt
+    parall: 1
+    groupingcode: LOCALFIRSTGROUPING
+    componentId: EmitTestSpout
+    streamId:
+  - name: EmitTestGetBolt
+    packagename: com.cqx.jstorm.bolt
+    parall: 1
+    groupingcode: LOCALFIRSTGROUPING
+    componentId: EmitTestBolt
+    streamId:
+
+param:
+  kafkaConfDir: "D:/Document/Workspaces/Git/TestJStorm/TestJStorm-App-Dpi/src/main/resources/producer.properties"
+  schemaUrl: "http://10.1.8.203:18061/SchemaService/getSchema?t="
+  kafka_username: alice
+  kafka_password: alice
+  topic: nmc_tb_lte_http
+
+classload:

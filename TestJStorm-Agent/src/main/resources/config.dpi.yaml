@@ -9,55 +9,51 @@ jstorm:
   storm_zookeeper_root: /udap/collect_jstorm
 
 topology:
-  worker_num: 1
+  worker_num: 3
   ack_num: 1
-  worker_memory: 1073741824
-  cpu_slotNum: 100
-  jvm_options:
-  name: EmitTest
-  ip: 127.0.0.1
+  worker_memory: 2048
+  name: DpiParserLTE
+  ip: 10.1.8.203,10.1.8.204,10.1.8.205
 
 spout:
   name: EmitDpiSpout
   packagename: com.cqx.jstorm.spout
-  parall: 1
+  parall: 3
 
 bolt:
   - name: EmitDpiIBolt
     packagename: com.cqx.jstorm.bolt
-    parall: 1
+    parall: 3
     groupingcode: LOCALFIRSTGROUPING
     componentId: EmitDpiSpout
     streamId:
   - name: EmitDpiErrBolt
     packagename: com.cqx.jstorm.bolt
-    parall: 1
+    parall: 3
     groupingcode: LOCALFIRSTGROUPING
     componentId: EmitDpiIBolt
     streamId: err
   - name: EmitDpiKafkaBolt
     packagename: com.cqx.jstorm.bolt
-    parall: 1
+    parall: 3
     groupingcode: LOCALFIRSTGROUPING
     componentId: EmitDpiIBolt
     streamId: kafka
 
 param:
-  sourDir: d:\tmp\data\dpi\dpi_ltedata\streaminput\
-  backDir: d:\tmp\data\dpi\dpi_ltedata\streambackup\
-  sinkDir: d:\tmp\data\dpi\dpi_ltedata\streamoutput\
-  tempDir: d:\tmp\data\dpi\dpi_ltedata\streamtmp\
-  errorDir: d:\tmp\data\dpi\dpi_ltedata\errdata\
+  sourDir: /bi/dataprocess/stream/hwlte/streaminput
+  backDir: /bi/dataprocess/stream/hwlte/streambackup
+  sinkDir: /bi/dataprocess/stream/hwlte/streamoutput
+  tempDir: /bi/dataprocess/stream/hwlte/streamtmp
+  errorDir: /bi/dataprocess/stream/hwlte/errdata
   separator: |
   dateLocal: 3
   nameSeparator: _
-  bolt_num: 3
-  kafkaConfDir: "D:/Document/Workspaces/Git/TestJStorm/TestJStorm-App-Dpi/src/main/resources/producer.properties"
-  schemaUrl: "http://10.1.8.203:18061/SchemaService/getSchema?t="
+  bolt_num: 1
+  kafkaConfDir: "D://Document//Workspaces//Git//TestJStorm//TestJStorm-App-Dpi//src//main//resources//producer.properties"
+  schemaUrl: "http://10.1.2.212:18061/SchemaService/getSchema?t="
   kafka_username: alice
   kafka_password: alice
-  maxqueuenum: "2"
-  scanInterval: "15000"
   typedefs:
     - name: http
       keyWord: HTTP

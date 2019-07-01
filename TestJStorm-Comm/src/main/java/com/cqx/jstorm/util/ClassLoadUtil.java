@@ -38,9 +38,12 @@ public class ClassLoadUtil {
     }
 
     public void parser(Object param, Map conf) {
-        List<String> tmp = (List<String>) param;
-        for (String _class : tmp) {
-            load(_class, conf);
-        }
+        if (param != null) {
+            List<String> tmp = (List<String>) param;
+            for (String _class : tmp) {
+                load(_class, conf);
+            }
+        } else
+            logger.warn("ClassLoadUtil get param is null.");
     }
 }

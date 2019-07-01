@@ -30,6 +30,7 @@ public class CommonBolt extends BaseRichBolt {
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
         this.exceptionMetrics = ExceptionMetrics.getInstance();
         this.exceptionMetrics.registerBolt(iBolt);
+        this.iBolt.setContext(context);
         this.iBolt.setCollector(collector);
         try {
             this.iBolt.prepare(stormConf, context);

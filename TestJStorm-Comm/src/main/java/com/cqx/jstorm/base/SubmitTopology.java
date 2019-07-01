@@ -57,7 +57,7 @@ public class SubmitTopology {
         agentBean.setType(argsParser.getParamValue("--type"));
         agentBean.setJarpath(argsParser.getParamValue("--jarpath"));
         logger.info("agentBean：{}", agentBean);
-        SubmitTopology.builder().submit(agentBean, "jar");
+        SubmitTopology.builder().submit(agentBean, "remote");
     }
 
     /**
@@ -138,6 +138,12 @@ public class SubmitTopology {
     private void setHostAssignmentWorkers(Map topologxyConfig) {
         // ip不为空才有分配策略
         String ips = appConst.getTopologyBean().getIp();
+        // 内存分配
+        long worker_memory = appConst.getTopologyBean().getWorker_memory();
+        // cpu权重分配
+        int cpu_slotNum = appConst.getTopologyBean().getCpu_slotNum();
+        // jvm参数
+        String jvm_options = appConst.getTopologyBean().getJvm_options();
         if (ips == null || ips.length() == 0) {
             logger.warn("ip is null , No adaptation custom Assignment rules.");
             logger.warn("Use default rules.");
@@ -166,8 +172,15 @@ public class SubmitTopology {
             worker.setHostName(iparr[i % iparr.length]);// 强制这个worker在某台机器上
             // 某些参数可以不设置
 //            worker.setJvm(jvm);//设置这个worker的jvm参数
+//            worker.setJvm("-Djava.security.auth.login.config=/bi/user/cqx/conf/kafka_client_jaas.conf");
 //            worker.setMem( long mem); //设置这个worker的内存大小
 //            worker.setCpu( int slotNum); //设置cpu的权重大小
+            if (jvm_options != null && jvm_options.length() > 0)
+                worker.setJvm(jvm_options);//设置这个worker的jvm参数
+            if (worker_memory > 0)
+                worker.setMem(worker_memory); //设置这个worker的内存大小
+            if (cpu_slotNum > 0)
+                worker.setCpu(cpu_slotNum); //设置cpu的权重大小
             for (Map.Entry<String, Integer> entry : topologyTaskParallelismMap.entrySet()) {
                 // 每个worker的并发都是平均的
                 worker.addComponent(entry.getKey(), entry.getValue() / totleWorkNum);
@@ -214,7 +227,7 @@ public class SubmitTopology {
             // 本地模式提交
             LocalCluster cluster = new LocalCluster();
             cluster.submitTopology(appConst.getTopologyBean().getName(), conf, builder.createTopology());
-            Utils.sleep(12000);
+            Utils.sleep(40000);
             cluster.shutdown();
         }
     }

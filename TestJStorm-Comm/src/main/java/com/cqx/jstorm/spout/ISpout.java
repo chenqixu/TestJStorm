@@ -4,6 +4,7 @@ import backtype.storm.spout.SpoutOutputCollector;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.tuple.Fields;
+import com.cqx.jstorm.metric.CommonMetric;
 import com.cqx.jstorm.util.AppConst;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  * @author chenqixu
  */
-public abstract class ISpout implements Serializable {
+public abstract class ISpout extends CommonMetric implements Serializable {
 
     private static final Logger logger = LoggerFactory.getLogger(ISpout.class);
     protected SpoutOutputCollector collector;
@@ -34,6 +35,7 @@ public abstract class ISpout implements Serializable {
         this.context = context;
         this.batchIndex = new AtomicInteger();
         this.taskInfo = this.context.getThisComponentId() + this.context.getThisTaskId() + this.context.getThisTaskIndex() + "@";
+        initMetric(this.context);
     }
 
     public void setCollector(SpoutOutputCollector collector) {

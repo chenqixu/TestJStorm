@@ -10,7 +10,9 @@ import java.util.Map;
 public class TopologyBean {
     private int worker_num;
     private int ack_num;
-    private int worker_memory;
+    private long worker_memory;
+    private int cpu_slotNum;
+    private String jvm_options;
     private String name;
     private String ip;
 
@@ -22,7 +24,9 @@ public class TopologyBean {
         Map<String, ?> tmp = (Map<String, ?>) param;
         worker_num = (Integer) tmp.get("worker_num");
         ack_num = (Integer) tmp.get("ack_num");
-        worker_memory = (Integer) tmp.get("worker_memory");
+        worker_memory = Long.valueOf(tmp.get("worker_memory").toString());
+        cpu_slotNum = (Integer) tmp.get("cpu_slotNum");
+        jvm_options = (String) tmp.get("jvm_options");
         name = (String) tmp.get("name");
         ip = (String) tmp.get("ip");
         return this;
@@ -44,11 +48,11 @@ public class TopologyBean {
         this.ack_num = ack_num;
     }
 
-    public int getWorker_memory() {
+    public long getWorker_memory() {
         return worker_memory;
     }
 
-    public void setWorker_memory(int worker_memory) {
+    public void setWorker_memory(long worker_memory) {
         this.worker_memory = worker_memory;
     }
 
@@ -66,5 +70,21 @@ public class TopologyBean {
 
     public void setIp(String ip) {
         this.ip = ip;
+    }
+
+    public int getCpu_slotNum() {
+        return cpu_slotNum;
+    }
+
+    public void setCpu_slotNum(int cpu_slotNum) {
+        this.cpu_slotNum = cpu_slotNum;
+    }
+
+    public String getJvm_options() {
+        return jvm_options;
+    }
+
+    public void setJvm_options(String jvm_options) {
+        this.jvm_options = jvm_options;
     }
 }

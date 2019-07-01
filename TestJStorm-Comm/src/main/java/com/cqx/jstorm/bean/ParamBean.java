@@ -15,8 +15,10 @@ public class ParamBean extends HashMap<String, Object> {
     }
 
     public ParamBean parser(Object param) {
-        Map<String, ?> tmp = (Map<String, ?>) param;
-        this.putAll(tmp);
+        if (param != null) {
+            Map<String, ?> tmp = (Map<String, ?>) param;
+            this.putAll(tmp);
+        }
         return this;
     }
 }

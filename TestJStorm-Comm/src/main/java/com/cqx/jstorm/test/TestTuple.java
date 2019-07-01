@@ -18,6 +18,7 @@ import java.util.Map;
 public class TestTuple implements Tuple {
 
     private Map<String, String> valueMap = new HashMap<>();
+    private Map<String, Object> valueObjectMap = new HashMap<>();
     private List<Object> valueList = new ArrayList<>();
     private String sourceStreamId;
 
@@ -28,14 +29,16 @@ public class TestTuple implements Tuple {
         return new TestTuple();
     }
 
-    public TestTuple put(String sourceStreamId, String filed, String value) {
+    public TestTuple put(String sourceStreamId, String filed, Object value) {
         this.sourceStreamId = sourceStreamId;
-        valueMap.put(filed, value);
+        if (value instanceof String)
+            valueMap.put(filed, (String) value);
+        valueObjectMap.put(filed, value);
         valueList.add(value);
         return this;
     }
 
-    public TestTuple put(String filed, String value) {
+    public TestTuple put(String filed, Object value) {
         put(null, filed, value);
         return this;
     }
@@ -117,7 +120,7 @@ public class TestTuple implements Tuple {
 
     @Override
     public Object getValueByField(String field) {
-        return null;
+        return valueObjectMap.get(field);
     }
 
     @Override

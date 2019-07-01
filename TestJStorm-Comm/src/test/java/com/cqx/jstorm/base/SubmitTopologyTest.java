@@ -13,12 +13,12 @@ public class SubmitTopologyTest {
 
     @Test
     public void setHostAssignmentWorkers() {
-        int totleWorkNum = 6;
-        String ips = "10.1.8.78,10.1.8.81,10.1.8.75";
+        int totleWorkNum = 20;
+        String ips = "10.1.8.78";
         String[] iparr = ips.split(",", -1);
         Map<String, Integer> topologyTaskParallelismMap = new HashMap<>();
-        topologyTaskParallelismMap.put("spout", 6);
-        topologyTaskParallelismMap.put("bolt", 12);
+        topologyTaskParallelismMap.put("spout", 1);
+        topologyTaskParallelismMap.put("bolt", 20);
         logger.info("totleWorkNum % iparr.length：{}", totleWorkNum % iparr.length);
         for (int i = 0; i < totleWorkNum; i++) {
             logger.info("i % iparr.length：{}", i % iparr.length);

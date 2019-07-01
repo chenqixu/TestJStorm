@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Random;
 
 /**
  * 提交测试
@@ -17,21 +17,27 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class EmitTestSpout extends ISpout {
 
     private static Logger logger = LoggerFactory.getLogger(EmitTestSpout.class);
-    private AtomicInteger atomicInteger = new AtomicInteger(0);
+    private Random random;
+    private int[] cnts = {1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500, 6000};
+    private int shutdown_cnt = 0;
 
     @Override
     public void open(Map conf, TopologyContext context) {
-        logger.info("####open");
+        logger.info("####EmitTestSpout.open");
+        random = new Random();
     }
 
     @Override
     public void nextTuple() throws Exception {
-        int emit_cnt = atomicInteger.getAndIncrement();
-        this.collector.emit(new Values(this.toString() + "####" + emit_cnt));
-        logger.info("####emit：{}", emit_cnt);
-        logger.info("####sleep 500");
-        Utils.sleep(500);
-//        throw new Exception("spouttest throw Exception.");
+        if (shutdown_cnt <= 50) {
+            int cnt = random.nextInt(10);
+            logger.info("####EmitTestSpout.cnt：{}，value：{}", cnt, cnts[cnt]);
+//        this.collector.emit(new Values(cnts[cnt]));
+            this.collector.emit(new Values(2000));
+        }
+//        logger.info("####EmitTestSpout.sleep 200");
+        Utils.sleep(200);
+        shutdown_cnt++;
     }
 
     @Override

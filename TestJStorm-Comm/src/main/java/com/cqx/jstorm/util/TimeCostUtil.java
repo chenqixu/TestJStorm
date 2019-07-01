@@ -1,5 +1,8 @@
 package com.cqx.jstorm.util;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * TimeCostUtil
  *
@@ -38,5 +41,15 @@ public class TimeCostUtil {
     public long stopAndGet() {
         stop();
         return getCost();
+    }
+
+    public String getStart() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        return sdf.format(new Date(start));
+    }
+
+    public String getEnd() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        return sdf.format(new Date(end));
     }
 }

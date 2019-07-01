@@ -4,7 +4,7 @@ import backtype.storm.task.OutputCollector;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.tuple.Tuple;
-import com.cqx.jstorm.util.AppConst;
+import com.cqx.jstorm.metric.CommonMetric;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,14 +16,20 @@ import java.util.Map;
  *
  * @author chenqixu
  */
-public abstract class IBolt implements Serializable {
+public abstract class IBolt extends CommonMetric implements Serializable {
 
     private static final Logger logger = LoggerFactory.getLogger(IBolt.class);
     protected OutputCollector collector;
+    private TopologyContext context;
 
     public static IBolt generate(String name) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         Class cls = Class.forName(name);
         return (IBolt) cls.newInstance();
+    }
+
+    public void setContext(TopologyContext context) {
+        this.context = context;
+        initMetric(this.context);
     }
 
     public void setCollector(OutputCollector collector) {

@@ -1,37 +1,40 @@
 jstorm:
   nimbus_host: 10.1.8.203
   nimbus_thrift_port: 17627
-  storm_zookeeper_servers: 10.1.8.198
+  storm_zookeeper_servers:
+    - "10.1.8.198"
+    - "10.1.4.185"
+    - "10.1.4.186"
   storm_zookeeper_port: 2183
   storm_zookeeper_root: /udap/collect_jstorm
 
 topology:
   worker_num: 3
   ack_num: 1
-  worker_memory: 1024
+  worker_memory: 2048
   name: EmitTest
   ip: 10.1.8.203,10.1.8.204,10.1.8.205
 
 spout:
   name: EmitDpiSpout
-  packagename: com.cqx.jstorm.spout.impl
+  packagename: com.cqx.jstorm.spout
   parall: 3
 
 bolt:
   - name: EmitDpiIBolt
-    packagename: com.cqx.jstorm.bolt.impl
-    parall: 6
+    packagename: com.cqx.jstorm.bolt
+    parall: 3
     groupingcode: LOCALFIRSTGROUPING
     componentId: EmitDpiSpout
     streamId:
   - name: EmitDpiErrBolt
-    packagename: com.cqx.jstorm.bolt.impl
+    packagename: com.cqx.jstorm.bolt
     parall: 3
     groupingcode: LOCALFIRSTGROUPING
     componentId: EmitDpiIBolt
     streamId: err
   - name: EmitDpiKafkaBolt
-    packagename: com.cqx.jstorm.bolt.impl
+    packagename: com.cqx.jstorm.bolt
     parall: 3
     groupingcode: LOCALFIRSTGROUPING
     componentId: EmitDpiIBolt
@@ -46,14 +49,17 @@ param:
   separator: |
   dateLocal: 3
   nameSeparator: _
-  bolt_num: 2
-  kafkaConfDir: "/bi/user/cqx/conf/producer.properties"
+  bolt_num: 1
+  kafkaConfDir: "D://Document//Workspaces//Git//TestJStorm//TestJStorm-App-Dpi//src//main//resources//producer.properties"
   schemaUrl: "http://10.1.2.212:18061/SchemaService/getSchema?t="
+  kafka_username: alice
+  kafka_password: alice
   typedefs:
     - name: http
       keyWord: HTTP
       isDpi: true
       value: length,city_1,interface,xdr_id,imsi,imei,msisdn,m_tmsi,ip_add_type,user_ip,sgw_ip_add,enodeb_ip_add,sgw_port,enodeb_port,tac,eci,other_tac,other_eci,rat,apn,sid,app_type_code,procedure_id,procedure_start_time,delay_time,procedure_end_time,app_class_top,app_class,ownclass,l4_protocol,busi_bear_type,source_port,server_ip,destination_port,mcc,mnc,upbytes,downbytes,dura,dura_1,upflow,downflow,updura,downdura,up_packet,down_packet,up_packet_flow,down_packet_flow,busi_behavior_identify,busi_complete_identify,busi_dura,ul_tcp_disordered_packets,dl_tcp_disordered_packets,ul_tcp_retransmission_packets,dl_tcp_retransmission_packets,ul_ip_frag_packets,dl_ip_frag_packets,tcp_built_delay,tcp_confirm_delay,first_tcp_success_delay,first_answer_delay,window_size,mss_size,tcp_attempts_cnt,tcp_connection_status,session_end_flag,host,uri,x_online_host,user_agent,http_content_type,refer_uri,cookie,content_length,target_action,wtp_disruption_type,wtp_disruption_causes,title,keyword,get,post,success,e100,e300,e401,area,city,areaclass,s_year,s_month,s_day,s_hour,s_minute,telnumber,imei_prefix8,terminaltype,mobilevendor,mobiletype,mobileos,sys_reported_time,p_id,page_id,object_type,object_status,http_versions,first_http_answer_delay,last_http_answer_delay,last_ack_answer_delay,browsing_tool,portal_app_collections,mmeues1apid,enbues1apid,location,first_request,enb_sgsn_gtp_teid,sgw_ggsn_gtp_teid,protocol_type,app_content,app_status,user_ipv6,app_server_ipv6,reserve_1,reserve_2,reserve_3,demand_1,demand_2,filename
+      dpirequestField: msisdn,app_class_top,app_class,unknow,eci,imei,tac,procedure_start_time,procedure_end_time,server_ip,destination_port,user_agent,uri,host,http_content_type,upbytes,downbytes
       hwField: label,apply_classify,apply_name,web_classify,web_name,search_keyword,urlmd5
       sinkField: xdr_id,imsi,imei,msisdn,user_ip,tac,eci,rat,apn,app_type_code,procedure_start_time,delay_time,procedure_end_time,app_class_top,app_class,source_port,server_ip,destination_port,upbytes,downbytes,up_packet,down_packet,ul_tcp_disordered_packets,dl_tcp_disordered_packets,ul_tcp_retransmission_packets,dl_tcp_retransmission_packets,ul_ip_frag_packets,dl_ip_frag_packets,host,uri,s_year,s_month,s_day,s_hour,apply_name,web_classify,web_name,search_keyword,apply_classify,user_agent,user_ipv6,app_server_ipv6,filename
       rtmField: city_1,imsi,imei,msisdn,tac,eci,rat,procedure_start_time,app_class,host,uri,apply_classify,apply_name,web_classify,web_name,search_keyword
@@ -63,6 +69,7 @@ param:
       keyWord: OTHER
       isDpi: true
       value: length,city_1,interface,xdr_id,imsi,imei,msisdn,m_tmsi,ip_add_type,user_ip,sgw_ip_add,enodeb_ip_add,sgw_port,enodeb_port,tac,eci,other_tac,other_eci,rat,apn,sid,app_type_code,procedure_start_time,delay_time,procedure_end_time,app_class_top,app_class,ownclass,l4_protocol,busi_bear_type,source_port,server_ip,destination_port,mcc,mnc,upbytes,downbytes,dura,dura_1,upflow,downflow,updura,downdura,up_packet,down_packet,up_packet_flow,down_packet_flow,busi_behavior_identify,busi_complete_identify,busi_dura,ul_tcp_disordered_packets,dl_tcp_disordered_packets,ul_tcp_retransmission_packets,dl_tcp_retransmission_packets,ul_ip_frag_packets,dl_ip_frag_packets,tcp_built_delay,tcp_confirm_delay,first_tcp_success_delay,first_answer_delay,window_size,mss_size,tcp_attempts_cnt,tcp_connection_status,session_end_flag,area,city,areaclass,s_year,s_month,s_day,s_hour,s_minute,telnumber,imei_prefix8,terminaltype,mobilevendor,mobiletype,mobileos,sys_reported_time,protocol_type,app_content,app_status,user_ipv6,app_server_ip_ipv6,mmeues1apid,enbues1apid,enb_sgsn_gtp_teid,sgw_ggsn_gtp_teid,reserve_1,reserve_2,reserve_3,filename
+      dpirequestField: length,city_1,interface,xdr_id,imsi,imei,msisdn,m_tmsi,ip_add_type
       hwField: label,apply_classify,apply_name,web_classify,web_name,search_keyword,urlmd5
       sinkField: xdr_id,imsi,imei,msisdn,user_ip,tac,eci,apn,app_type_code,procedure_start_time,delay_time,procedure_end_time,app_class_top,app_class,source_port,server_ip,destination_port,upbytes,downbytes,up_packet,down_packet,ul_tcp_disordered_packets,dl_tcp_disordered_packets,ul_tcp_retransmission_packets,dl_tcp_retransmission_packets,ul_ip_frag_packets,dl_ip_frag_packets,s_year,s_month,s_day,s_hour,app_server_ip_ipv6,apply_name,apply_classify,user_ipv6,filename
       rtmField:
@@ -72,8 +79,12 @@ param:
       keyWord: RTSP
       isDpi: true
       value: length,city_1,interface,xdr_id,imsi,imei,msisdn,m_tmsi,ip_add_type,user_ip,sgw_ip_add,enodeb_ip_add,sgw_port,enodeb_port,tac,eci,other_tac,other_eci,rat,apn,sid,app_type_code,procedure_id,procedure_start_time,delay_time,procedure_end_time,app_class_top,app_class,ownclass,l4_protocol,busi_bear_type,source_port,server_ip,destination_port,mcc,mnc,upbytes,downbytes,dura,dura_1,upflow,downflow,updura,downdura,up_packet,down_packet,up_packet_flow,down_packet_flow,busi_behavior_identify,busi_complete_identify,busi_dura,ul_tcp_disordered_packets,dl_tcp_disordered_packets,ul_tcp_retransmission_packets,dl_tcp_retransmission_packets,ul_ip_frag_packets,dl_ip_frag_packets,tcp_built_delay,tcp_confirm_delay,first_tcp_success_delay,first_answer_delay,window_size,mss_size,tcp_attempts_cnt,tcp_connection_status,session_end_flag,url,user_agent,rtp_server_ip,client_start_prot,client_end_prot,server_start_prot,server_end_prot,video_flux,audio_flux,answer_dely,area,city,areaclass,s_year,s_month,s_day,s_hour,s_minute,telnumber,imei_prefix8,terminaltype,mobilevendor,mobiletype,mobileos,sys_reported_time,p_id,mmeues1apid,enbues1apid,enb_sgsn_gtp_teid,sgw_ggsn_gtp_teid,protocol_type,app_content,app_status,user_ipv6,app_server_ipv6,reserve_1,reserve_2,reserve_3,filename
+      dpirequestField: length,city_1,interface,xdr_id,imsi,imei,msisdn,m_tmsi
       hwField: label,apply_classify,apply_name,web_classify,web_name,search_keyword,urlmd5
       sinkField: xdr_id,imsi,imei,msisdn,user_ip,tac,eci,apn,app_type_code,procedure_start_time,delay_time,procedure_end_time,app_class_top,app_class,source_port,server_ip,destination_port,upbytes,downbytes,up_packet,down_packet,ul_tcp_disordered_packets,dl_tcp_disordered_packets,ul_tcp_retransmission_packets,dl_tcp_retransmission_packets,ul_ip_frag_packets,dl_ip_frag_packets,url,user_agent,rtp_server_ip,s_year,s_month,s_day,s_hour,apply_name,web_classify,web_name,apply_classify,user_ipv6,app_server_ipv6,filename
       rtmField:
       rtmkey:
       topic:
+
+classload:
+  - "com.cqx.jstorm.utils.KafkaClientJAASLoader"
