@@ -83,10 +83,19 @@ public class EmitDpiKafkaBolt extends IBolt {
     @Override
     public void execute(Tuple input) throws Exception {
         if (input.getSourceStreamId().equals(EmitDpiIBolt.KAFKA_STREAM_ID)) {
+            // 单条记录
             KafkaTuple kafkaTuple = (KafkaTuple) input.getValueByField(EmitDpiIBolt.KAFKA_FIELDS);
-            counterInc(getCounter);
             // 如果队列满，则阻塞
             kafkaTupleBlockingQueue.put(kafkaTuple);
+//            // 一批记录
+//            List<KafkaTuple> kafkaTuples = (List<KafkaTuple>) input.getValueByField(EmitDpiIBolt.KAFKA_FIELDS);
+//            for (KafkaTuple kafkaTuple : kafkaTuples)
+//                kafkaTupleBlockingQueue.put(kafkaTuple);
+            int queueSize = kafkaTupleBlockingQueue.getQueueSize();
+            if (queueSize > 4000) {
+//                logger.warn("kafkaTupleBlockingQueue size > 4000，now：{}", queueSize);
+                kafkaTupleBlockingQueue.poll();
+            }
         }
     }
 
@@ -120,13 +129,13 @@ public class EmitDpiKafkaBolt extends IBolt {
                     byte[] msg = genericRecordUtil.genericRecord(topic, values);
                     // 发往kafka
                     kafkaProducerUtil.send(topic, key, msg);
-                    counterInc(sendCounter);
-                    counterSize(sendSizeCounter, msg.length);
+//                    counterInc(sendCounter);
+//                    counterSize(sendSizeCounter, msg.length);
                     logger.debug("send，topic：{}，key：{}，value：{}", topic, key, msg);
                 }
                 // 休眠1秒
-                logger.info("kafka消费队列为空，休眠1秒");
-                Utils.sleep(1000);
+//                logger.info("kafka消费队列为空，休眠1秒");
+                Utils.sleep(1);
             }
             logger.info("kafka消费线程已停止");
         }

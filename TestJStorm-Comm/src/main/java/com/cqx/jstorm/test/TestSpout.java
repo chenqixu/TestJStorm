@@ -23,7 +23,7 @@ public class TestSpout {
     protected Map stormConf;
     protected TestSpoutOutputCollector collector;
 
-    protected void prepare(String conf) throws IOException {
+    public void prepare(String conf) throws IOException {
         // 解析配置
         YamlParser yamlParser = YamlParser.builder();
         appConst = yamlParser.parserConf(conf);
@@ -38,11 +38,11 @@ public class TestSpout {
         }
     }
 
-    protected Object pollMessage() {
+    public Object pollMessage() {
         return collector.pollMessage();
     }
 
-    protected List<Object> pollTuple() {
+    public List<Object> pollTuple() {
         return collector.pollTuple();
     }
 }

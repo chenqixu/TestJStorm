@@ -88,7 +88,7 @@ public class EmitDpiIBolt extends IBolt {
         }
     }
 
-    protected void declareOutputFields(OutputFieldsDeclarer declarer) {
+    public void declareOutputFields(OutputFieldsDeclarer declarer) {
 //        declarer.declare(new Fields(EmitDpiSpout.VALUES));
         declarer.declareStream(ERR_STREAM_ID, new Fields(EmitDpiSpout.VALUES));
         declarer.declareStream(KAFKA_STREAM_ID, new Fields(KAFKA_FIELDS));

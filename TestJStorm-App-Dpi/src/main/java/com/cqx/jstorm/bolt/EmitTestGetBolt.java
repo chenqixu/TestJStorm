@@ -7,11 +7,12 @@ import com.cqx.jstorm.util.AppConst;
 import com.cqx.jstorm.util.Utils;
 import com.cqx.jstorm.utils.GenericRecordUtil;
 import com.cqx.jstorm.utils.KafkaProducerUtil;
-import com.cqx.jstorm.utils.KafkaTupleBlockingQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -29,8 +30,10 @@ public class EmitTestGetBolt extends IBolt {
     private String schemaUrl;
     private String kafkaConfDir;
 
-    private KafkaTupleBlockingQueue kafkaTupleBlockingQueue;
+    //    private KafkaTupleBlockingQueue kafkaTupleBlockingQueue;
+    private BlockingQueue<KafkaTuple> kafkaTupleBlockingQueue;
     private SendKafka sendKafka;
+    private long receviceCnt;
 
     @Override
     public void prepare(Map stormConf, TopologyContext context) throws Exception {
@@ -43,16 +46,16 @@ public class EmitTestGetBolt extends IBolt {
         kafkaProducerUtil = new KafkaProducerUtil<>(kafkaConfDir, kafkaUser, kafkaPass);
         genericRecordUtil = new GenericRecordUtil(schemaUrl);
         genericRecordUtil.addTopic(topic);
-        kafkaTupleBlockingQueue = new KafkaTupleBlockingQueue();
+//        kafkaTupleBlockingQueue = new KafkaTupleBlockingQueue();
         sendKafka = new SendKafka();
         new Thread(sendKafka).start();
-//        new Thread(sendKafka).start();
+        kafkaTupleBlockingQueue = new LinkedBlockingQueue<>();
     }
 
     @Override
     public void execute(Tuple input) throws Exception {
-        KafkaTuple kafkaTuple = (KafkaTuple) input.getValueByField(AppConst.FIELDS);
-        kafkaTupleBlockingQueue.put(kafkaTuple);
+//        KafkaTuple kafkaTuple = (KafkaTuple) input.getValueByField(AppConst.FIELDS);
+//        kafkaTupleBlockingQueue.put(kafkaTuple);
 //        String key = kafkaTuple.getKey();
 //        Map<String, String> valueMap = kafkaTuple.getFields();
 //        String topic = kafkaTuple.getTopic();
@@ -62,12 +65,19 @@ public class EmitTestGetBolt extends IBolt {
 //        if (printcnt % 2000 == 0) {
 //            logger.info("printcnt：{}", printcnt);
 //        }
+        KafkaTuple kafkaTuple = (KafkaTuple) input.getValueByField(AppConst.FIELDS);
+        kafkaTupleBlockingQueue.put(kafkaTuple);
+        receviceCnt++;
+        if (receviceCnt % 20000 == 0) {
+            logger.info("EmitTestGetBolt.receive，receviceCnt：{}", receviceCnt);
+        }
+//        logger.info("EmitTestGetBolt.receive，kafkaTuple：{}", kafkaTuple);
     }
 
     @Override
     public void cleanup() {
         logger.info("####{} to cleanup", this);
-        if (kafkaTupleBlockingQueue != null) kafkaTupleBlockingQueue.stop();
+//        if (kafkaTupleBlockingQueue != null) kafkaTupleBlockingQueue.stop();
         if (sendKafka != null) sendKafka.stop();
         if (kafkaProducerUtil != null) kafkaProducerUtil.release();
     }
@@ -93,13 +103,12 @@ public class EmitTestGetBolt extends IBolt {
                     byte[] value = genericRecordUtil.genericRecord(topic, valueMap);
                     kafkaProducerUtil.send(topic, key, value);
                     int p = printcnt.incrementAndGet();
-                    if (p % 2000 == 0) {
+                    if (p % 20000 == 0) {
                         logger.info("printcnt：{}", printcnt);
                     }
                 }
-                // 休眠1秒
-//                logger.info("kafka消费队列为空，休眠1秒");
-                Utils.sleep(50);
+                // 休眠1毫秒
+                Utils.sleep(1);
             }
         }
     }

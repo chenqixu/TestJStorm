@@ -58,6 +58,7 @@ param:
   kafka_password: alice
   maxqueuenum: "2"
   scanInterval: "15000"
+  topic: nmc_tb_lte_http
   typedefs:
     - name: http
       keyWord: HTTP

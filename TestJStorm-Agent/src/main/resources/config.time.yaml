@@ -1,0 +1,35 @@
+jstorm:
+  nimbus_host: 10.1.8.203
+  nimbus_thrift_port: 17627
+  storm_zookeeper_servers:
+    - "10.1.8.198"
+    - "10.1.4.185"
+    - "10.1.4.186"
+  storm_zookeeper_port: 2183
+  storm_zookeeper_root: /udap/collect_jstorm
+
+topology:
+  worker_num: 1
+  ack_num: 0
+  worker_memory: 0
+  cpu_slotNum: 0
+  jvm_options:
+  name: EmitTest
+  ip: 10.1.8.204
+
+spout:
+  name: EmitTimeSpout
+  packagename: com.cqx.jstorm.spout
+  parall: 1
+
+bolt:
+  - name: EmitTimeBolt
+    packagename: com.cqx.jstorm.bolt
+    parall: 1
+    groupingcode: LOCALFIRSTGROUPING
+    componentId: EmitTimeSpout
+    streamId:
+
+param:
+
+classload:

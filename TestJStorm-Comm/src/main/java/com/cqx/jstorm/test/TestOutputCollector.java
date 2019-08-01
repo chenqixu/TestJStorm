@@ -1,13 +1,13 @@
 package com.cqx.jstorm.test;
 
-import backtype.storm.task.IOutputCollector;
+import backtype.storm.generated.StreamInfo;
 import backtype.storm.task.OutputCollector;
-import backtype.storm.tuple.Tuple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.BlockingQueue;
 
 /**
  * TestOutputCollector
@@ -17,41 +17,31 @@ import java.util.List;
 public class TestOutputCollector extends OutputCollector {
 
     private static Logger logger = LoggerFactory.getLogger(TestOutputCollector.class);
+    private TestIOutputCollector testIOutputCollector;
 
-    public TestOutputCollector(IOutputCollector delegate) {
+    public TestOutputCollector(TestIOutputCollector delegate) {
         super(delegate);
+        this.testIOutputCollector = delegate;
     }
 
     public static TestOutputCollector build() {
         return new TestOutputCollector(new TestIOutputCollector());
     }
 
-    static class TestIOutputCollector implements IOutputCollector {
-
-        @Override
-        public List<Integer> emit(String streamId, Collection<Tuple> anchors, List<Object> tuple) {
-            logger.info("throw emit，streamId：{}，anchors：{}，tuple：{}", streamId, anchors, tuple);
-            return null;
-        }
-
-        @Override
-        public void emitDirect(int taskId, String streamId, Collection<Tuple> anchors, List<Object> tuple) {
-            logger.info("throw emitDirect，taskId：{}，streamId：{}，anchors：{}，tuple：{}", taskId, streamId, anchors, tuple);
-        }
-
-        @Override
-        public void ack(Tuple input) {
-            logger.info("throw ack，input：{}", input);
-        }
-
-        @Override
-        public void fail(Tuple input) {
-            logger.info("throw fail，input：{}", input);
-        }
-
-        @Override
-        public void reportError(Throwable error) {
-            logger.info("throw reportError，error：{}", error);
-        }
+    public synchronized HashMap<String, BlockingQueue<HashMap<String, Object>>> pollStreamIdMap() {
+        return testIOutputCollector.getStreamIdMap();
     }
+
+    public synchronized HashMap<String, Object> pollTuples() {
+        return pollTuples("default");
+    }
+
+    public synchronized HashMap<String, Object> pollTuples(String streamId) {
+        return testIOutputCollector.getStreamIdMap().get(streamId).poll();
+    }
+
+    public void set_fields(Map<String, StreamInfo> _fields) {
+        this.testIOutputCollector.set_fields(_fields);
+    }
+
 }

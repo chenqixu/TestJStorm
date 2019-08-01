@@ -40,7 +40,7 @@ public abstract class IBolt extends CommonMetric implements Serializable {
 
     public abstract void execute(Tuple input) throws Exception;
 
-    protected void declareOutputFields(OutputFieldsDeclarer declarer) {
+    public void declareOutputFields(OutputFieldsDeclarer declarer) {
     }
 
     public void cleanup() {

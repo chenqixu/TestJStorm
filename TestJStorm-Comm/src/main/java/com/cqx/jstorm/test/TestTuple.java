@@ -39,7 +39,7 @@ public class TestTuple implements Tuple {
     }
 
     public TestTuple put(String filed, Object value) {
-        put(null, filed, value);
+        put("default", filed, value);
         return this;
     }
 
@@ -130,7 +130,7 @@ public class TestTuple implements Tuple {
 
     @Override
     public Integer getIntegerByField(String field) {
-        return null;
+        return (Integer) valueObjectMap.get(field);
     }
 
     @Override
