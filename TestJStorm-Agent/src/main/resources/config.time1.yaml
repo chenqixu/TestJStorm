@@ -9,23 +9,23 @@ jstorm:
   storm_zookeeper_root: /udap/collect_jstorm
 
 topology:
-  worker_num: 8
+  worker_num: 16
   ack_num: 0
   worker_memory: 0
   cpu_slotNum: 0
   jvm_options:
-  name: EmitTime
-  ip: 10.1.8.204
+  name: EmitTime1
+  ip: 10.1.8.203,10.1.8.205
 
 spout:
   name: EmitTimeSpout
   packagename: com.cqx.jstorm.spout
-  parall: 8
+  parall: 16
 
 bolt:
   - name: EmitTimeBolt
     packagename: com.cqx.jstorm.bolt
-    parall: 8
+    parall: 16
     groupingcode: LOCALFIRSTGROUPING
     componentId: EmitTimeSpout
     streamId:
