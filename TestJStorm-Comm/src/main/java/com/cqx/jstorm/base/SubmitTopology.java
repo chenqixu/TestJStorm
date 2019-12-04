@@ -95,18 +95,28 @@ public class SubmitTopology {
                 case GLOBALGROUPING:
                     break;
                 case SHUFFLEGROUPING:
-                    if (boltBean.getStreamId() != null && boltBean.getStreamId().length() > 0)
-                        boltDeclarer.shuffleGrouping(boltBean.getComponentId(), boltBean.getStreamId());
-                    else
-                        boltDeclarer.shuffleGrouping(boltBean.getComponentId());
+                    if (boltBean.getStreamId() != null) {
+                        for (int i = 0; i < boltBean.getComponentId().length; i++) {
+                            boltDeclarer.shuffleGrouping(boltBean.getComponentId()[i], boltBean.getStreamId()[i]);
+                        }
+                    } else {
+                        for (int i = 0; i < boltBean.getComponentId().length; i++) {
+                            boltDeclarer.shuffleGrouping(boltBean.getComponentId()[i]);
+                        }
+                    }
                     break;
                 case LOCALORSHUFFLEGROUPING:
                     break;
                 case LOCALFIRSTGROUPING:
-                    if (boltBean.getStreamId() != null && boltBean.getStreamId().length() > 0)
-                        boltDeclarer.localFirstGrouping(boltBean.getComponentId(), boltBean.getStreamId());
-                    else
-                        boltDeclarer.localFirstGrouping(boltBean.getComponentId());
+                    if (boltBean.getStreamId() != null) {
+                        for (int i = 0; i < boltBean.getComponentId().length; i++) {
+                            boltDeclarer.localFirstGrouping(boltBean.getComponentId()[i], boltBean.getStreamId()[i]);
+                        }
+                    } else {
+                        for (int i = 0; i < boltBean.getComponentId().length; i++) {
+                            boltDeclarer.localFirstGrouping(boltBean.getComponentId()[i]);
+                        }
+                    }
                     break;
                 case NONEGROUPING:
                     break;

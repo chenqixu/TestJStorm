@@ -14,8 +14,8 @@ public class BoltBean {
     private String packagename;
     private int parall;
     private GroupingCode groupingcode;
-    private String componentId;
-    private String streamId;
+    private String[] componentId;
+    private String[] streamId;
 
     public static BoltBean newbuilder() {
         return new BoltBean();
@@ -37,6 +37,11 @@ public class BoltBean {
         setGroupingcode(GroupingCode.valueOf((String) param.get("groupingcode")));
         setComponentId((String) param.get("componentId"));
         setStreamId((String) param.get("streamId"));
+        // 如果streamid和componentid都不为空，则长度要一一对应
+        if (streamId != null && componentId != null) {
+            if (streamId.length != componentId.length)
+                throw new RuntimeException("BoltName：" + getName() + "，streamid和componentid长度不一致，请检查！");
+        }
         return this;
     }
 
@@ -76,19 +81,23 @@ public class BoltBean {
         this.packagename = packagename;
     }
 
-    public String getComponentId() {
+    public String[] getComponentId() {
         return componentId;
     }
 
     public void setComponentId(String componentId) {
-        this.componentId = componentId;
+        if (componentId != null && componentId.length() > 0) {
+            this.componentId = componentId.split(",", -1);
+        }
     }
 
-    public String getStreamId() {
+    public String[] getStreamId() {
         return streamId;
     }
 
     public void setStreamId(String streamId) {
-        this.streamId = streamId;
+        if (streamId != null && streamId.length() > 0) {
+            this.streamId = streamId.split(",", -1);
+        }
     }
 }

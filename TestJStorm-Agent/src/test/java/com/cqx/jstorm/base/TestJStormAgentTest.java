@@ -19,7 +19,7 @@ public class TestJStormAgentTest {
 //        conf_file = "config.yaml";
 //        conf_file = "config.time.yaml";
 //        conf_file = "config.time1.yaml";
-        conf_file = "config.time2.yaml";
+        conf_file = "config.getandsend.yaml";
         String[] _args = new String[]{"--conf", "D:\\Document\\Workspaces\\Git\\TestJStorm\\TestJStorm-Agent\\src\\main\\resources\\" + conf_file,
                 "--type", "submit",
                 "--jarpath", "D:\\Document\\Workspaces\\Git\\TestJStorm\\target"
@@ -31,7 +31,7 @@ public class TestJStormAgentTest {
     public void kill() throws Exception {
         String conf_file;
 //        conf_file = "config.yaml";
-        conf_file = "config.time1.yaml";
+        conf_file = "config.getandsend.yaml";
         String[] _args = new String[]{"--conf", "D:\\Document\\Workspaces\\Git\\TestJStorm\\TestJStorm-Agent\\src\\main\\resources\\" + conf_file,
                 "--type", "kill",
                 "--jarpath", "D:\\Document\\Workspaces\\Git\\TestJStorm\\target"
