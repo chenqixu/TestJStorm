@@ -9,6 +9,7 @@ import com.alibaba.jstorm.client.ConfigExtension;
 import com.alibaba.jstorm.client.WorkerAssignment;
 import com.cqx.jstorm.bean.AgentBean;
 import com.cqx.jstorm.bean.BoltBean;
+import com.cqx.jstorm.bean.SpoutBean;
 import com.cqx.jstorm.bolt.CommonBolt;
 import com.cqx.jstorm.spout.CommonSpout;
 import com.cqx.jstorm.util.*;
@@ -69,11 +70,12 @@ public class SubmitTopology {
      * @throws InstantiationException
      */
     private void addSpout(TopologyBuilder builder) throws IllegalAccessException, ClassNotFoundException, InstantiationException {
-        // 创建Spout
-        builder.setSpout(appConst.getSpoutBean().getName(),
-                new CommonSpout(appConst.getSpoutBean().getGenerateClassName()),
-                appConst.getSpoutBean().getParall());
-        topologyTaskParallelismMap.put(appConst.getSpoutBean().getName(), appConst.getSpoutBean().getParall());
+        for (SpoutBean spoutBean : appConst.getSpoutBeanList()) {
+            builder.setSpout(spoutBean.getName(),
+                    new CommonSpout(spoutBean.getGenerateClassName()),
+                    spoutBean.getParall());
+            topologyTaskParallelismMap.put(spoutBean.getName(), spoutBean.getParall());
+        }
     }
 
     /**

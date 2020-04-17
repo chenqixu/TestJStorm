@@ -22,14 +22,14 @@ public class AppConst {
 
     private JstormBean jstormBean;
     private TopologyBean topologyBean;
-    private SpoutBean spoutBean;
+    private List<SpoutBean> spoutBeanList;
     private List<BoltBean> boltBeanList;
     private ParamBean paramBean;
 
     public void parserParam(Map<?, ?> params) {
         jstormBean = JstormBean.newbuilder().parser(params.get(JSTORM));
         topologyBean = TopologyBean.newbuilder().parser(params.get(TOPOLOGY));
-        spoutBean = SpoutBean.newbuilder().parser(params.get(SPOUT));
+        spoutBeanList = SpoutBean.parser(params.get(SPOUT));
         boltBeanList = BoltBean.parser(params.get(BOLT));
         paramBean = ParamBean.newbuilder().parser(params.get(PARAM));
         // 加载自定义类
@@ -40,8 +40,8 @@ public class AppConst {
         return topologyBean;
     }
 
-    public SpoutBean getSpoutBean() {
-        return spoutBean;
+    public List<SpoutBean> getSpoutBeanList() {
+        return spoutBeanList;
     }
 
     public JstormBean getJstormBean() {

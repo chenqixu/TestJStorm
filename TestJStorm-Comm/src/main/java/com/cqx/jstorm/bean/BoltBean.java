@@ -22,10 +22,12 @@ public class BoltBean {
     }
 
     public static List<BoltBean> parser(Object param) {
-        List<Map<String, ?>> parser = (ArrayList<Map<String, ?>>) param;
         List<BoltBean> result = new ArrayList<>();
-        for (Map<String, ?> map : parser) {
-            result.add(BoltBean.newbuilder().parserMap(map));
+        if (param != null) {
+            List<Map<String, ?>> parser = (ArrayList<Map<String, ?>>) param;
+            for (Map<String, ?> map : parser) {
+                result.add(BoltBean.newbuilder().parserMap(map));
+            }
         }
         return result;
     }

@@ -21,8 +21,9 @@ public class AsmHistogramBean {
         start = asmHistogram.getTime();
     }
 
-    public void end() {
+    public long end() {
         asmHistogram.updateTime(start);
+        return 0;
     }
 
     public AsmHistogram getAsmHistogram() {
