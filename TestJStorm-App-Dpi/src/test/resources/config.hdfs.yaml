@@ -1,0 +1,45 @@
+jstorm:
+  nimbus_host: 10.1.8.203
+  nimbus_thrift_port: 17627
+  storm_zookeeper_servers:
+    - "10.1.8.198"
+    - "10.1.4.185"
+    - "10.1.4.186"
+  storm_zookeeper_port: 2183
+  storm_zookeeper_root: /udap/collect_jstorm
+
+topology:
+  worker_num: 1
+  ack_num: 0
+  worker_memory: 2147483648
+  cpu_slotNum: 0
+  jvm_options:
+  name: EmitHdfs
+  ip: 10.1.8.204
+
+spout:
+  name: EmitHdfsSpout
+  packagename: com.cqx.jstorm.spout
+  parall: 1
+
+bolt:
+  - name: EmitHdfsBolt
+    packagename: com.cqx.jstorm.bolt
+    parall: 1
+    groupingcode: LOCALFIRSTGROUPING
+    componentId: EmitHdfsSpout
+    streamId:
+
+param:
+  hadoop_conf: "d:/tmp/etc/hadoop/conf75/"
+  hdfsFilePath: "/cqx/data/hbidc/202005200000/nat/000000_0"
+  max_line: "10000"
+  extension: "01-${device_id}-${seq}-${file_start_time}-${file_end_time}-${record_count}-${md5}-${file_size}.txt.gz"
+  seq_zk_path: "/computecenter/task_context/if_upload_iptrace_jitian/infoId"
+  zookeeper: "10.1.4.186:2183"
+  sftp_host: "10.1.8.204"
+  sftp_port: "22"
+  sftp_user: "edc_base"
+  sftp_password: "fLyxp1s*"
+  local_bak_path: "d:/tmp/data/hblog/if_upload_hb_netlog/${run_date}/"
+  remote_path: "/bi/user/cqx/data/hblog/"

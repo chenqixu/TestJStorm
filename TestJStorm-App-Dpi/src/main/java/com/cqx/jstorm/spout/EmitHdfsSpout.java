@@ -30,11 +30,12 @@ public class EmitHdfsSpout extends ISpout {
 
     @Override
     public void open(Map conf, TopologyContext context) throws Exception {
+        logger.info("params：{}", conf);
         String hadoop_conf = (String) conf.get("hadoop_conf");
         hdfsFilePath = (String) conf.get("hdfsFilePath");
         max_line = Integer.valueOf((String) conf.get("max_line"));
+
         hdfsTool = new HdfsTool(hadoop_conf, new HdfsBean());
-        logger.info("params：{}", conf);
     }
 
     @Override
@@ -69,7 +70,7 @@ public class EmitHdfsSpout extends ISpout {
                 if (fileResult.getFileresult().size() > 0) {
                     emit(fileResult.getFileresult());
                 }
-                logger.info("read：{}，submit：{}", fileResult.getCount("read"), fileResult.getCount("submit"));
+                logger.info("============== read：{}，submit：{}", fileResult.getCount("read"), fileResult.getCount("submit"));
             } finally {
                 fileUtil.closeRead();
             }
@@ -79,8 +80,8 @@ public class EmitHdfsSpout extends ISpout {
     }
 
     private void emit(List<String> msgList) {
+        logger.info("emit msgList，size：{}", msgList.size());
         this.collector.emit(new Values(msgList));
-        logger.info("emit msgList");
     }
 
     @Override
