@@ -7,6 +7,8 @@ import com.cqx.common.utils.file.FileUtil;
 import com.cqx.common.utils.hdfs.HdfsBean;
 import com.cqx.common.utils.hdfs.HdfsTool;
 import com.cqx.common.utils.system.SleepUtil;
+import com.cqx.jstorm.mbean.Hdfs;
+import com.cqx.jstorm.jmx.JMXMbeanFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +29,7 @@ public class EmitHdfsSpout extends ISpout {
     private String hdfsFilePath;
     private int max_line;
     private boolean isExec = false;
+    private Hdfs hdfs;
 
     @Override
     public void open(Map conf, TopologyContext context) throws Exception {
@@ -36,6 +39,9 @@ public class EmitHdfsSpout extends ISpout {
         max_line = Integer.valueOf((String) conf.get("max_line"));
 
         hdfsTool = new HdfsTool(hadoop_conf, new HdfsBean());
+        //发布到jmx
+        hdfs = new Hdfs();
+        JMXMbeanFactory.register("Hdfs", hdfs);
     }
 
     @Override
@@ -81,6 +87,7 @@ public class EmitHdfsSpout extends ISpout {
 
     private void emit(List<String> msgList) {
         logger.info("emit msgList，size：{}", msgList.size());
+        hdfs.add(msgList.size());
         this.collector.emit(new Values(msgList));
     }
 

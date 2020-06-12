@@ -43,3 +43,4 @@ param:
   sftp_password: "fLyxp1s*"
   local_bak_path: "d:/tmp/data/hblog/if_upload_hb_netlog/${run_date}/"
   remote_path: "/bi/user/cqx/data/hblog/"
+  topology.worker.childopts: "-Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.port=12345"
