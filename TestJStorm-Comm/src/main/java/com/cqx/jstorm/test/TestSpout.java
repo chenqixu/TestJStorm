@@ -15,8 +15,8 @@ import java.util.Map;
  *
  * @author chenqixu
  */
-public class TestSpout {
-    protected String conf = "file:///D:\\Document\\Workspaces\\Git\\TestJStorm\\TestJStorm-Agent\\src\\main\\resources\\config.local.yaml";
+public class TestSpout extends TestBase {
+    protected String conf = getResourceClassPath("config.local.yaml");
     protected AppConst appConst;
     protected ISpout iSpout;
     protected TopologyContext context;

@@ -18,9 +18,8 @@ import java.util.concurrent.BlockingQueue;
  *
  * @author chenqixu
  */
-public class TestBolt {
-
-    protected String conf = "file:///D:\\Document\\Workspaces\\Git\\TestJStorm\\TestJStorm-Agent\\src\\main\\resources\\config.local.yaml";
+public class TestBolt extends TestBase {
+    protected String conf = getResourceClassPath("config.local.yaml");
     protected AppConst appConst;
     protected IBolt iBolt;
     protected TopologyContext context;

@@ -19,13 +19,13 @@ public class EmitDpiSpoutTest extends TestSpout {
 
     private static Logger logger = LoggerFactory.getLogger(EmitDpiSpoutTest.class);
     private Random random = new Random();
-    private String conf = "file:///D:\\Document\\Workspaces\\Git\\TestJStorm\\TestJStorm-Agent\\src\\main\\resources\\config.local.s1mme.yaml";
     private String path = "";
 
     @Before
     public void setUp() throws Exception {
         // spout初始化
         iSpout = new EmitDpiSpout();
+        conf = getResourceClassPath("config.local.s1mme.yaml");
         super.prepare(conf);
         iSpout.open(stormConf, context);
         path = (String) stormConf.get("sourDir");

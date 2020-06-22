@@ -7,12 +7,11 @@ import org.junit.Test;
 
 public class EmitTimeSpoutTest extends TestSpout {
 
-    private String conf = "file:///D:\\Document\\Workspaces\\Git\\TestJStorm\\TestJStorm-Agent\\src\\main\\resources\\config.local.s1mme.yaml";
-
     @Before
     public void setUp() throws Exception {
         // spout初始化
         iSpout = new EmitTimeSpout();
+        conf = getResourceClassPath("config.local.s1mme.yaml");
         super.prepare(conf);
         iSpout.open(stormConf, context);
     }
