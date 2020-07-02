@@ -1,6 +1,5 @@
 package com.cqx.jstorm.message;
 
-import com.cqx.jstorm.message.IMessageId;
 import com.cqx.jstorm.spout.ISpout;
 
 /**

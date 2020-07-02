@@ -6,15 +6,15 @@ import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Values;
 import com.cqx.common.utils.param.ParamUtil;
 import com.cqx.jstorm.bean.FastFailureBean;
-import com.cqx.jstorm.message.EmitDpiMessageId;
+import com.cqx.jstorm.bean.FastFailureTask;
+import com.cqx.jstorm.bean.HdfsLSBean;
+import com.cqx.jstorm.message.FastFailureMessage;
 import com.cqx.jstorm.util.TimeCostUtil;
+import com.cqx.jstorm.utils.FastFailureUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * 快速失败Spout
@@ -25,12 +25,9 @@ public class FastFailureSpout extends ISpout {
 
     public static final String FAST_FAILURE_FIELD1 = "send";
     private static final Logger logger = LoggerFactory.getLogger(FastFailureSpout.class);
-    private BlockingQueue<String> dataQueue = new LinkedBlockingQueue<>();
-    private BlockingQueue<String> failureQueue = new LinkedBlockingQueue<>();
-    private ConcurrentHashMap<String, String> runningQueue = new ConcurrentHashMap<>();
     private FastFailureBean fastFailureBean;
     private TimeCostUtil timeCostUtil;
-    private long task_seq = 0L;
+    private FastFailureUtil fastFailureUtil;
 
     @Override
     public void open(Map conf, TopologyContext context) throws Exception {
@@ -38,89 +35,52 @@ public class FastFailureSpout extends ISpout {
         fastFailureBean = ParamUtil.setValueByMap(conf, FastFailureBean.class);
         //参数打印
         ParamUtil.info(fastFailureBean, logger);
+        //时间工具类
+        timeCostUtil = new TimeCostUtil();
+        //快速失败工具类
+        fastFailureUtil = new FastFailureUtil(fastFailureBean.getBolt_num());
         //生成1000个任务
         for (int i = 0; i < 1000; i++) {
-            dataQueue.put(String.format("%s-Task", i));
+            HdfsLSBean hdfsLSBean = new HdfsLSBean();
+            hdfsLSBean.setContent(String.format("%s-Task", i));
+            fastFailureUtil.addData(hdfsLSBean);
         }
-        timeCostUtil = new TimeCostUtil();
     }
 
     @Override
     public void nextTuple() throws Exception {
         //处理间隔
         if (timeCostUtil.tag(fastFailureBean.getSpout_next_run())) {
-            //运行队列大小小于下游并发个数，就可以继续派发
-            int can_run = fastFailureBean.getBolt_num() - runningQueue.size();
-            if (can_run > 0) {
-                int exec = 0;
-                String task_name;
-                task_seq++;
-                //从失败队列获取任务
-                while (exec < can_run && (task_name = failureQueue.poll()) != null) {
+            fastFailureUtil.poll(new FastFailureUtil.FastFailureEmit() {
+                @Override
+                public void emit(FastFailureTask fastFailureTask) {
                     //下发
-                    this.collector.emit(new Values(task_name),
-                            new EmitDpiMessageId(this, "", task_name));
-                    exec++;
-                    //提交到运行队列
-                    runningQueue.put(task_name, task_name);
-                    logger.info(String.format("【任务序号%05d】从失败队列获取任务：%s，并提交，当前失败队列大小%s",
-                            task_seq, task_name, failureQueue.size()));
+                    HdfsLSBean hdfsLSBean = (HdfsLSBean) fastFailureTask;
+                    collector.emit(new Values(hdfsLSBean.getTaskName()), new FastFailureMessage(getThis(), hdfsLSBean));
                 }
-                //从任务队列获取任务
-                while (exec < can_run && (task_name = dataQueue.poll()) != null) {
-                    //下发
-                    this.collector.emit(new Values(task_name),
-                            new EmitDpiMessageId(this, "", task_name));
-                    exec++;
-                    //提交到运行队列
-                    runningQueue.put(task_name, task_name);
-                    logger.info(String.format("【任务序号%05d】从任务队列获取任务：%s，并提交，当前任务队列大小%s",
-                            task_seq, task_name, dataQueue.size()));
-                }
-                if (exec > 0) {
-                    logger.info(String.format("【任务序号%05d】结束本轮派发任务，共派发了%s个任务",
-                            task_seq, exec));
-                } else {
-                    task_seq--;
-                }
-            } else {
-                logger.info("不满足任务派发条件，正在运行任务队列大小：{}，总共可运行任务队列大小：{}",
-                        runningQueue.size(), fastFailureBean.getBolt_num());
-            }
+            });
         }
     }
 
+    private FastFailureSpout getThis() {
+        return this;
+    }
+
     public void ack(Object object) {
-        if (object instanceof EmitDpiMessageId) {
-            EmitDpiMessageId emitDpiMessageId = (EmitDpiMessageId) object;
-            String filename = emitDpiMessageId.getFilename();
-            if (runningQueue.get(filename) != null) {
-                //从running队列移除
-                runningQueue.remove(filename);
-                logger.info("ACK. 从running队列移除：{}", filename);
-            }
+        if (object instanceof FastFailureMessage) {
+            FastFailureMessage fastFailureMessage = (FastFailureMessage) object;
+            fastFailureUtil.ack(fastFailureMessage.getHdfsLSBean());
         } else {
-            logger.warn("ack object is not instanceof EmitDpiMessageId. please check. object：{}", object);
+            logger.warn("ack object is not instanceof FastFailureMessage. please check. object：{}", object);
         }
     }
 
     public void fail(Object object) {
-        if (object instanceof EmitDpiMessageId) {
-            EmitDpiMessageId emitDpiMessageId = (EmitDpiMessageId) object;
-            String filename = emitDpiMessageId.getFilename();
-            if (runningQueue.get(filename) != null) {
-                //从running队列移除，并增加到failureQueue队列
-                runningQueue.remove(filename);
-                try {
-                    failureQueue.put(filename);
-                } catch (InterruptedException e) {
-                    logger.error(e.getMessage(), e);
-                }
-                logger.info("FAIL. 从running队列移除：{}，并增加到failureQueue队列，当前failureQueue队列大小{}",
-                        filename, failureQueue.size());
-            }
+        if (object instanceof FastFailureMessage) {
+            FastFailureMessage fastFailureMessage = (FastFailureMessage) object;
+            fastFailureUtil.fail(fastFailureMessage.getHdfsLSBean());
         } else {
-            logger.warn("fail object is not instanceof EmitDpiMessageId. please check. object：{}", object);
+            logger.warn("fail object is not instanceof FastFailureMessage. please check. object：{}", object);
         }
     }
 
