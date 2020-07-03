@@ -6,7 +6,6 @@ import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Values;
 import com.cqx.common.utils.param.ParamUtil;
 import com.cqx.jstorm.bean.FastFailureBean;
-import com.cqx.jstorm.bean.FastFailureTask;
 import com.cqx.jstorm.bean.HdfsLSBean;
 import com.cqx.jstorm.message.FastFailureMessage;
 import com.cqx.jstorm.util.TimeCostUtil;
@@ -53,17 +52,16 @@ public class FastFailureSpout extends ISpout {
         if (timeCostUtil.tag(fastFailureBean.getSpout_next_run())) {
             fastFailureUtil.poll(new FastFailureUtil.FastFailureEmit() {
                 @Override
-                public void emit(FastFailureTask fastFailureTask) {
+                public void emit(FastFailureUtil.FastFailureTask fastFailureTask) {
                     //下发
-                    HdfsLSBean hdfsLSBean = (HdfsLSBean) fastFailureTask;
-                    collector.emit(new Values(hdfsLSBean.getTaskName()), new FastFailureMessage(getThis(), hdfsLSBean));
+                    collectorEmit((HdfsLSBean) fastFailureTask);
                 }
             });
         }
     }
 
-    private FastFailureSpout getThis() {
-        return this;
+    private void collectorEmit(HdfsLSBean hdfsLSBean) {
+        collector.emit(new Values(hdfsLSBean.getTaskName()), new FastFailureMessage(this, hdfsLSBean));
     }
 
     public void ack(Object object) {

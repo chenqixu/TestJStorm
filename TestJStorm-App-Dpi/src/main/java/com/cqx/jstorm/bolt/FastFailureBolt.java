@@ -37,7 +37,7 @@ public class FastFailureBolt extends IBolt {
         task_seq++;
         //判断当前是否还在运行，如果在运行就快速失败，如果不在运行就提交任务
         //非结束状态都是快速失败
-        if (fastFailureThread != null && !fastFailureThread.getState().equals(Thread.State.TERMINATED)) {
+        if (fastFailureThread != null && !fastFailureThread.isTerminated()) {
             //快速失败
             this.collector.fail(input);
             logger.info(String.format("【任务序号%05d】任务快速失败，由于任务：%s还在运行，所以任务：%s需要快速失败",
@@ -81,6 +81,10 @@ public class FastFailureBolt extends IBolt {
 
         String getTask_name() {
             return task_name;
+        }
+
+        boolean isTerminated() {
+            return getState().equals(Thread.State.TERMINATED);
         }
     }
 }

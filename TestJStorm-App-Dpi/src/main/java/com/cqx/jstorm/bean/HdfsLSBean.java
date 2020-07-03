@@ -1,13 +1,14 @@
 package com.cqx.jstorm.bean;
 
 import com.cqx.common.utils.system.TimeUtil;
+import com.cqx.jstorm.utils.FastFailureUtil;
 
 /**
  * HdfsLSBean
  *
  * @author chenqixu
  */
-public class HdfsLSBean implements Comparable<HdfsLSBean>,FastFailureTask {
+public class HdfsLSBean implements Comparable<HdfsLSBean>, FastFailureUtil.FastFailureTask {
     private String date;
     private String type = "default";
     private String content;

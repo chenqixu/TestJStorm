@@ -1,6 +1,5 @@
 package com.cqx.jstorm.utils;
 
-import com.cqx.jstorm.bean.FastFailureTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,5 +95,9 @@ public class FastFailureUtil {
 
     public interface FastFailureEmit {
         void emit(FastFailureTask fastFailureTask);
+    }
+
+    public interface FastFailureTask {
+        String getTaskName();
     }
 }
