@@ -30,7 +30,8 @@ public class SubmitTopology {
 
     private static Logger logger = LoggerFactory.getLogger(SubmitTopology.class);
     private YamlParser yamlParser = YamlParser.builder();
-    private Map<String, Integer> topologyTaskParallelismMap = new HashMap<>();
+    private Map<String, Integer> topologySpoutTaskParallelismMap = new HashMap<>();
+    private Map<String, Integer> topologyBoltTaskParallelismMap = new HashMap<>();
     private AppConst appConst;
 
     private SubmitTopology() {
@@ -74,7 +75,7 @@ public class SubmitTopology {
             builder.setSpout(spoutBean.getName(),
                     new CommonSpout(spoutBean.getGenerateClassName()),
                     spoutBean.getParall());
-            topologyTaskParallelismMap.put(spoutBean.getName(), spoutBean.getParall());
+            topologySpoutTaskParallelismMap.put(spoutBean.getName(), spoutBean.getParall());
         }
     }
 
@@ -131,7 +132,7 @@ public class SubmitTopology {
                 default:
                     break;
             }
-            topologyTaskParallelismMap.put(boltBean.getName(), boltBean.getParall());
+            topologyBoltTaskParallelismMap.put(boltBean.getName(), boltBean.getParall());
         }
     }
 
@@ -169,12 +170,17 @@ public class SubmitTopology {
             logger.warn("Use default rules.");
             return;
         }
-        // spout和bolt的并发必须是worker的倍数
-        for (Map.Entry<String, Integer> entry : topologyTaskParallelismMap.entrySet()) {
+        // 平均分的
+        Map<String, Integer> topologyAvgTaskParallelismMap = new HashMap<>(topologySpoutTaskParallelismMap);
+        // 允许spout的并发不是worker的倍数
+        // bolt的并发必须是worker的倍数
+        for (Map.Entry<String, Integer> entry : topologyBoltTaskParallelismMap.entrySet()) {
             if (entry.getValue() % totleWorkNum != 0) {
                 logger.warn("{} parall：{} must be a multipe of worknum：{}，please check.", entry.getKey(), entry.getValue(), totleWorkNum);
                 logger.warn("Use default rules.");
                 return;
+            } else {
+                topologyAvgTaskParallelismMap.put(entry.getKey(), entry.getValue());
             }
         }
         // 根据worker_num，spout和bolt生成一个worker list
@@ -193,9 +199,30 @@ public class SubmitTopology {
                 worker.setMem(worker_memory); //设置这个worker的内存大小
             if (cpu_slotNum > 0)
                 worker.setCpu(cpu_slotNum); //设置cpu的权重大小
-            for (Map.Entry<String, Integer> entry : topologyTaskParallelismMap.entrySet()) {
-                // 每个worker的并发都是平均的
-                worker.addComponent(entry.getKey(), entry.getValue() / totleWorkNum);
+            for (Map.Entry<String, Integer> entry : topologyAvgTaskParallelismMap.entrySet()) {
+//                // 平均分算法
+//                // 每个worker的并发都是平均的
+//                worker.addComponent(entry.getKey(), entry.getValue() / totleWorkNum);
+                // 即可平均分又可以轮询的算法
+                String key = entry.getKey();
+                int value = entry.getValue();
+                int result = value / totleWorkNum;
+                int mod = 0;
+                if (result > 0) {
+                    mod = value % totleWorkNum;
+                    if (mod > i) {
+                        logger.info("worker {}，add {}，num：{}", i, key, result + 1);
+                        worker.addComponent(key, result + 1);
+                    } else {
+                        logger.info("worker {}，add {}，num：{}", i, key, result);
+                        worker.addComponent(key, result);
+                    }
+                } else {
+                    if (value > i) {
+                        logger.info("worker {}，add {}，num：{}", i, key, 1);
+                        worker.addComponent(key, 1);
+                    }
+                }
             }
             logger.info("worker：{} bind ip：{}", worker, iparr[i % iparr.length]);
             userDefines.add(worker);

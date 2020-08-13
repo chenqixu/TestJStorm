@@ -37,4 +37,38 @@ public class SubmitTopologyTest {
             }
         }
     }
+
+    @Test
+    public void newAllocate() {
+        String[] spout_array = {"s1", "s2", "s3", "s4", "s5", "s6"};
+        String[] worker_array = {"w1", "w2", "w3"};
+        for (int i = 0; i < spout_array.length; i++) {
+            String allocate_worker = worker_array[i % worker_array.length];
+//            logger.info("spout：{}，allocate worker：{}", spout_array[i], allocate_worker);
+        }
+        Map<String, Integer> spout = new HashMap<>();
+        int totleWorkNum = 3;
+        spout.put("S", 1);
+        spout.put("A", 8);
+        for (int i = 0; i < totleWorkNum; i++) {
+            for (Map.Entry<String, Integer> entry : spout.entrySet()) {
+                String key = entry.getKey();
+                int value = entry.getValue();
+                int result = value / totleWorkNum;
+                int mod = 0;
+                if (result > 0) {
+                    mod = value % totleWorkNum;
+                    if (mod > i) {
+                        logger.info("worker {}，add {}，num：{}", i, key, result + 1);
+                    } else {
+                        logger.info("worker {}，add {}，num：{}", i, key, result);
+                    }
+                } else {
+                    if (value > i) {
+                        logger.info("worker {}，add {}，num：{}", i, key, 1);
+                    }
+                }
+            }
+        }
+    }
 }
