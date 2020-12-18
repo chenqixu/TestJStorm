@@ -3,6 +3,7 @@ package com.cqx.jstorm.spout;
 import com.cqx.jstorm.bean.DpiFile;
 import com.cqx.jstorm.bean.TypeDef;
 import com.cqx.jstorm.test.TestSpout;
+import com.cqx.jstorm.test.TestTuple;
 import com.cqx.jstorm.util.AppConst;
 import com.cqx.jstorm.util.Utils;
 import com.cqx.jstorm.utils.DpiFileUtil;
@@ -56,20 +57,19 @@ public class EmitDpiSpoutTest extends TestSpout {
             @Override
             public void run() {
                 while (true) {
-                    Object messageId = pollMessage();
-                    List<Object> tuple = pollTuple();
-                    if (messageId != null && tuple != null) {
-                        logger.info("ack receive tuple：{}，messageId：{}", tuple, messageId);
+                    TestTuple tuple = pollTuple();
+                    if (tuple != null) {
+                        logger.info("ack receive tuple：{}，messageId：{}", tuple, tuple.getMessageId());
                         // 假装一个文件处理1200毫秒
 //                        int dealtime = random.nextInt(3);
 //                        if (dealtime < 1) dealtime = 1;
 //                        Utils.sleep(dealtime * 1000);
-                        String filename = (String) tuple.get(1);
+                        String filename = tuple.getStringByField("values");
                         DpiFileUtil.deleteFile(path, filename);
                         int dealtime = 1200;
                         Utils.sleep(dealtime);
                         logger.info("文件处理了：{} 秒", dealtime);
-                        iSpout.ack(messageId);
+                        iSpout.ack(tuple.getMessageId());
                     }
                 }
             }

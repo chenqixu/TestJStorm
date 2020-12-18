@@ -21,12 +21,21 @@ public class TestTuple implements Tuple {
     private Map<String, Object> valueObjectMap = new HashMap<>();
     private List<Object> valueList = new ArrayList<>();
     private String sourceStreamId;
+    private TestMessageId messageId = new TestMessageId(MessageId.generateId());
 
-    public TestTuple() {
+    private TestTuple() {
+    }
+
+    private TestTuple(TestMessageId messageId) {
+        this.messageId = messageId;
     }
 
     public static TestTuple builder() {
         return new TestTuple();
+    }
+
+    public static TestTuple builder(TestMessageId messageId) {
+        return new TestTuple(messageId);
     }
 
     public TestTuple put(String sourceStreamId, String filed, Object value) {
@@ -195,6 +204,6 @@ public class TestTuple implements Tuple {
 
     @Override
     public MessageId getMessageId() {
-        return null;
+        return messageId;
     }
 }

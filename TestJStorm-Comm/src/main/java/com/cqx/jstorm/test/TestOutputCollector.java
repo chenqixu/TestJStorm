@@ -15,7 +15,6 @@ import java.util.concurrent.BlockingQueue;
  * @author chenqixu
  */
 public class TestOutputCollector extends OutputCollector {
-
     private static Logger logger = LoggerFactory.getLogger(TestOutputCollector.class);
     private TestIOutputCollector testIOutputCollector;
 
@@ -28,20 +27,19 @@ public class TestOutputCollector extends OutputCollector {
         return new TestOutputCollector(new TestIOutputCollector());
     }
 
-    public synchronized HashMap<String, BlockingQueue<HashMap<String, Object>>> pollStreamIdMap() {
+    public synchronized HashMap<String, BlockingQueue<TestTuple>> pollStreamIdMap() {
         return testIOutputCollector.getStreamIdMap();
     }
 
-    public synchronized HashMap<String, Object> pollTuples() {
+    public synchronized TestTuple pollTuples() {
         return pollTuples("default");
     }
 
-    public synchronized HashMap<String, Object> pollTuples(String streamId) {
+    public synchronized TestTuple pollTuples(String streamId) {
         return testIOutputCollector.getStreamIdMap().get(streamId).poll();
     }
 
     public void set_fields(Map<String, StreamInfo> _fields) {
         this.testIOutputCollector.set_fields(_fields);
     }
-
 }

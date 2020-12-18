@@ -14,8 +14,8 @@ public class BoltBean {
     private String packagename;
     private int parall;
     private GroupingCode groupingcode;
-    private String[] componentId;
-    private String[] streamId;
+    private List<ReceiveBean> receiveBeanList;
+    private List<SendBean> sendBeanList;
 
     public static BoltBean newbuilder() {
         return new BoltBean();
@@ -37,12 +37,23 @@ public class BoltBean {
         setPackagename((String) param.get("packagename"));
         setParall((Integer) param.get("parall"));
         setGroupingcode(GroupingCode.valueOf((String) param.get("groupingcode")));
-        setComponentId((String) param.get("componentId"));
-        setStreamId((String) param.get("streamId"));
-        // 如果streamid和componentid都不为空，则长度要一一对应
-        if (streamId != null && componentId != null) {
-            if (streamId.length != componentId.length)
-                throw new RuntimeException("BoltName：" + getName() + "，streamid和componentid长度不一致，请检查！");
+        //定义接收对象
+        Object receive = param.get("receive");
+        if (receive != null) {
+            receiveBeanList = new ArrayList<>();
+            List _receiveBeanList = (ArrayList) receive;
+            for (Object object : _receiveBeanList) {
+                receiveBeanList.add(new ReceiveBean((Map) object));
+            }
+        }
+        //定义发送对象
+        Object send = param.get("send");
+        if (send != null) {
+            sendBeanList = new ArrayList<>();
+            List _sendBeanList = (ArrayList) send;
+            for (Object object : _sendBeanList) {
+                sendBeanList.add(new SendBean((Map) object));
+            }
         }
         return this;
     }
@@ -83,23 +94,19 @@ public class BoltBean {
         this.packagename = packagename;
     }
 
-    public String[] getComponentId() {
-        return componentId;
+    public List<ReceiveBean> getReceiveBeanList() {
+        return receiveBeanList;
     }
 
-    public void setComponentId(String componentId) {
-        if (componentId != null && componentId.length() > 0) {
-            this.componentId = componentId.split(",", -1);
-        }
+    public void setReceiveBeanList(List<ReceiveBean> receiveBeanList) {
+        this.receiveBeanList = receiveBeanList;
     }
 
-    public String[] getStreamId() {
-        return streamId;
+    public List<SendBean> getSendBeanList() {
+        return sendBeanList;
     }
 
-    public void setStreamId(String streamId) {
-        if (streamId != null && streamId.length() > 0) {
-            this.streamId = streamId.split(",", -1);
-        }
+    public void setSendBeanList(List<SendBean> sendBeanList) {
+        this.sendBeanList = sendBeanList;
     }
 }

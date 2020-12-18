@@ -33,7 +33,7 @@ public class EmitGroupingSpout extends ISpout {
     }
 
     @Override
-    protected void declareOutputFields(OutputFieldsDeclarer declarer) {
+    public void declareOutputFields(OutputFieldsDeclarer declarer) {
         declarer.declareStream(GET_AND_SEND1, new Fields(AppConst.FIELDS));
         declarer.declareStream(GET_AND_SEND2, new Fields(AppConst.FIELDS));
     }

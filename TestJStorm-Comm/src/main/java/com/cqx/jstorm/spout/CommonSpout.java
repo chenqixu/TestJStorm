@@ -4,6 +4,7 @@ import backtype.storm.spout.SpoutOutputCollector;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseRichSpout;
+import com.cqx.jstorm.bean.SpoutBean;
 import com.cqx.jstorm.util.ExceptionMetrics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,11 @@ public class CommonSpout extends BaseRichSpout {
 
     public CommonSpout(String spout_name) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
         this.iSpout = ISpout.generate(spout_name);
+    }
+
+    public CommonSpout(SpoutBean spoutBean) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
+        this.iSpout = ISpout.generate(spoutBean.getGenerateClassName());
+        this.iSpout.setSendBeanList(spoutBean.getSendBeanList());
     }
 
     @Override

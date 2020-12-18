@@ -85,7 +85,7 @@ public class FastFailureSpout extends ISpout {
     public void close() {
     }
 
-    protected void declareOutputFields(OutputFieldsDeclarer declarer) {
+    public void declareOutputFields(OutputFieldsDeclarer declarer) {
         declarer.declare(new Fields(FAST_FAILURE_FIELD1));
     }
 }

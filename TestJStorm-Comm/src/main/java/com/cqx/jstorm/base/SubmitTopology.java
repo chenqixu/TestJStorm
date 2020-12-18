@@ -5,10 +5,12 @@ import backtype.storm.LocalCluster;
 import backtype.storm.StormSubmitter;
 import backtype.storm.topology.BoltDeclarer;
 import backtype.storm.topology.TopologyBuilder;
+import backtype.storm.tuple.Fields;
 import com.alibaba.jstorm.client.ConfigExtension;
 import com.alibaba.jstorm.client.WorkerAssignment;
 import com.cqx.jstorm.bean.AgentBean;
 import com.cqx.jstorm.bean.BoltBean;
+import com.cqx.jstorm.bean.ReceiveBean;
 import com.cqx.jstorm.bean.SpoutBean;
 import com.cqx.jstorm.bolt.CommonBolt;
 import com.cqx.jstorm.spout.CommonSpout;
@@ -73,7 +75,7 @@ public class SubmitTopology {
     private void addSpout(TopologyBuilder builder) throws IllegalAccessException, ClassNotFoundException, InstantiationException {
         for (SpoutBean spoutBean : appConst.getSpoutBeanList()) {
             builder.setSpout(spoutBean.getName(),
-                    new CommonSpout(spoutBean.getGenerateClassName()),
+                    new CommonSpout(spoutBean),
                     spoutBean.getParall());
             topologySpoutTaskParallelismMap.put(spoutBean.getName(), spoutBean.getParall());
         }
@@ -90,34 +92,39 @@ public class SubmitTopology {
     private void addBolt(TopologyBuilder builder) throws IllegalAccessException, ClassNotFoundException, InstantiationException {
         for (BoltBean boltBean : appConst.getBoltBeanList()) {
             BoltDeclarer boltDeclarer = builder.setBolt(boltBean.getName(),
-                    new CommonBolt(boltBean.getGenerateClassName()),
+                    new CommonBolt(boltBean),
                     boltBean.getParall());
             switch (boltBean.getGroupingcode()) {
                 case FIELDSGROUPING:
+                    for (ReceiveBean receiveBean : boltBean.getReceiveBeanList()) {
+                        if (receiveBean.getStreamId() != null) {
+                            boltDeclarer.fieldsGrouping(receiveBean.getComponentId(), receiveBean.getStreamId(),
+                                    new Fields(receiveBean.getFieldsgrouping_fields()));
+                        } else {
+                            boltDeclarer.fieldsGrouping(receiveBean.getComponentId(),
+                                    new Fields(receiveBean.getFieldsgrouping_fields()));
+                        }
+                    }
                     break;
                 case GLOBALGROUPING:
                     break;
                 case SHUFFLEGROUPING:
-                    if (boltBean.getStreamId() != null) {
-                        for (int i = 0; i < boltBean.getComponentId().length; i++) {
-                            boltDeclarer.shuffleGrouping(boltBean.getComponentId()[i], boltBean.getStreamId()[i]);
-                        }
-                    } else {
-                        for (int i = 0; i < boltBean.getComponentId().length; i++) {
-                            boltDeclarer.shuffleGrouping(boltBean.getComponentId()[i]);
+                    for (ReceiveBean receiveBean : boltBean.getReceiveBeanList()) {
+                        if (receiveBean.getStreamId() != null) {
+                            boltDeclarer.shuffleGrouping(receiveBean.getComponentId(), receiveBean.getStreamId());
+                        } else {
+                            boltDeclarer.shuffleGrouping(receiveBean.getComponentId());
                         }
                     }
                     break;
                 case LOCALORSHUFFLEGROUPING:
                     break;
                 case LOCALFIRSTGROUPING:
-                    if (boltBean.getStreamId() != null) {
-                        for (int i = 0; i < boltBean.getComponentId().length; i++) {
-                            boltDeclarer.localFirstGrouping(boltBean.getComponentId()[i], boltBean.getStreamId()[i]);
-                        }
-                    } else {
-                        for (int i = 0; i < boltBean.getComponentId().length; i++) {
-                            boltDeclarer.localFirstGrouping(boltBean.getComponentId()[i]);
+                    for (ReceiveBean receiveBean : boltBean.getReceiveBeanList()) {
+                        if (receiveBean.getStreamId() != null) {
+                            boltDeclarer.localFirstGrouping(receiveBean.getComponentId(), receiveBean.getStreamId());
+                        } else {
+                            boltDeclarer.localFirstGrouping(receiveBean.getComponentId());
                         }
                     }
                     break;
@@ -231,9 +238,17 @@ public class SubmitTopology {
         ConfigExtension.setUserDefineAssignment(topologxyConfig, userDefines);
     }
 
+    public SubmitTopology setAppConst(Map<Object, Object> map) throws Exception {
+        // 解析yaml
+        appConst = yamlParser.parserMap(map);
+        return this;
+    }
+
     public void submit(AgentBean agentBean, String type) throws Exception {
-        // 解析yaml配置文件
-        appConst = yamlParser.parserConf(agentBean.getConf());
+        if (appConst == null) {
+            // 解析yaml配置文件
+            appConst = yamlParser.parserConf(agentBean.getConf());
+        }
         // 创建topology的生成器
         TopologyBuilder builder = new TopologyBuilder();
         // 创建Spout

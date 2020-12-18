@@ -264,7 +264,7 @@ public class EmitDpiSpout extends ISpout {
     }
 
     @Override
-    protected void declareOutputFields(OutputFieldsDeclarer declarer) {
+    public void declareOutputFields(OutputFieldsDeclarer declarer) {
         declarer.declare(new Fields(KEYWORD, VALUES));
     }
 

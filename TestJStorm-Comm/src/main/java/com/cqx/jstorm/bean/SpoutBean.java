@@ -15,6 +15,7 @@ public class SpoutBean {
     private String name;
     private int parall;
     private String packagename;
+    private List<SendBean> sendBeanList;
 
     public static SpoutBean newbuilder() {
         return new SpoutBean();
@@ -47,6 +48,15 @@ public class SpoutBean {
         setParall((Integer) param.get("parall"));
         setName((String) param.get("name"));
         setPackagename((String) param.get("packagename"));
+        //定义发送对象
+        Object send = param.get("send");
+        if (send != null) {
+            sendBeanList = new ArrayList<>();
+            List _sendBeanList = (ArrayList) send;
+            for (Object object : _sendBeanList) {
+                sendBeanList.add(new SendBean((Map) object));
+            }
+        }
         return this;
     }
 
@@ -76,5 +86,13 @@ public class SpoutBean {
 
     public String getGenerateClassName() {
         return getPackagename() + "." + getName();
+    }
+
+    public List<SendBean> getSendBeanList() {
+        return sendBeanList;
+    }
+
+    public void setSendBeanList(List<SendBean> sendBeanList) {
+        this.sendBeanList = sendBeanList;
     }
 }

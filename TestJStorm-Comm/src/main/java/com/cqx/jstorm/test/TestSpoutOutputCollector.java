@@ -1,15 +1,14 @@
 package com.cqx.jstorm.test;
 
+import backtype.storm.generated.StreamInfo;
 import backtype.storm.spout.ISpoutOutputCollector;
 import backtype.storm.spout.SpoutOutputCollector;
-import backtype.storm.spout.SpoutOutputCollectorCb;
-import backtype.storm.task.ICollectorCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * TestSpoutOutputCollector
@@ -17,89 +16,35 @@ import java.util.concurrent.LinkedBlockingQueue;
  * @author chenqixu
  */
 public class TestSpoutOutputCollector extends SpoutOutputCollector {
-
     private static Logger logger = LoggerFactory.getLogger(TestSpoutOutputCollector.class);
-    private static BlockingQueue<Object> messageQueue = new LinkedBlockingQueue<>();
-    private static BlockingQueue<List<Object>> tupleQueue = new LinkedBlockingQueue<>();
+    private TestSpoutOutputCollectorCb testSpoutOutputCollectorCb;
 
     public TestSpoutOutputCollector(ISpoutOutputCollector delegate) {
         super(delegate);
     }
 
-    public TestSpoutOutputCollector(SpoutOutputCollectorCb delegate) {
+    public TestSpoutOutputCollector(TestSpoutOutputCollectorCb delegate) {
         super(delegate);
+        this.testSpoutOutputCollectorCb = delegate;
     }
 
     public static TestSpoutOutputCollector build() {
-//        return new TestSpoutOutputCollector(new TestISpoutOutputCollector());
         return new TestSpoutOutputCollector(new TestSpoutOutputCollectorCb());
     }
 
-    public synchronized Object pollMessage() {
-        return messageQueue.poll();
+    public synchronized HashMap<String, BlockingQueue<TestTuple>> pollStreamIdMap() {
+        return testSpoutOutputCollectorCb.getStreamIdMap();
     }
 
-    public synchronized List<Object> pollTuple() {
-        return tupleQueue.poll();
+    public synchronized TestTuple pollTuple() {
+        return pollTuple("default");
     }
 
-    static class TestISpoutOutputCollector implements ISpoutOutputCollector {
-
-        @Override
-        public List<Integer> emit(String streamId, List<Object> tuple, Object messageId) {
-            logger.debug("throw emit，streamId：{}，tuple：{}，messageId：{}", streamId, tuple, messageId);
-            try {
-                messageQueue.put(messageId);
-                tupleQueue.put(tuple);
-            } catch (Exception e) {
-                logger.error(e.getMessage(), e);
-            }
-            return null;
-        }
-
-        @Override
-        public void emitDirect(int taskId, String streamId, List<Object> tuple, Object messageId) {
-            logger.debug("throw emitDirect，taskId：{}，streamId：{}，tuple：{}，messageId：{}", taskId, streamId, tuple, messageId);
-        }
-
-        @Override
-        public void reportError(Throwable error) {
-            logger.error("throw reportError，error：{}", error);
-        }
+    public synchronized TestTuple pollTuple(String streamId) {
+        return testSpoutOutputCollectorCb.getStreamIdMap().get(streamId).poll();
     }
 
-    static class TestSpoutOutputCollectorCb extends SpoutOutputCollectorCb {
-
-        @Override
-        public List<Integer> emit(String streamId, List<Object> tuple, Object messageId, ICollectorCallback callback) {
-            logger.debug("throw emit，streamId：{}，tuple：{}，messageId：{}", streamId, tuple, messageId);
-            try {
-                if (messageId != null) messageQueue.put(messageId);
-                tupleQueue.put(tuple);
-            } catch (Exception e) {
-                logger.error(e.getMessage(), e);
-            }
-            return null;
-        }
-
-        @Override
-        public void emitDirect(int taskId, String streamId, List<Object> tuple, Object messageId, ICollectorCallback callback) {
-            logger.debug("throw emitDirect，taskId：{}，streamId：{}，tuple：{}，messageId：{}", taskId, streamId, tuple, messageId);
-        }
-
-        @Override
-        public List<Integer> emit(String streamId, List<Object> tuple, Object messageId) {
-            return emit(streamId, tuple, messageId, null);
-        }
-
-        @Override
-        public void emitDirect(int taskId, String streamId, List<Object> tuple, Object messageId) {
-            logger.debug("throw emitDirect，taskId：{}，streamId：{}，tuple：{}，messageId：{}", taskId, streamId, tuple, messageId);
-        }
-
-        @Override
-        public void reportError(Throwable error) {
-            logger.error("throw reportError，error：{}", error);
-        }
+    public void set_fields(Map<String, StreamInfo> _fields) {
+        this.testSpoutOutputCollectorCb.set_fields(_fields);
     }
 }

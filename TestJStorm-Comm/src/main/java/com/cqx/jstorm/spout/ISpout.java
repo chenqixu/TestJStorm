@@ -4,13 +4,16 @@ import backtype.storm.spout.SpoutOutputCollector;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.tuple.Fields;
+import com.cqx.jstorm.bean.SendBean;
 import com.cqx.jstorm.metric.CommonMetric;
 import com.cqx.jstorm.util.AppConst;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -25,6 +28,7 @@ public abstract class ISpout extends CommonMetric implements Serializable {
     private TopologyContext context;
     private AtomicInteger batchIndex;
     private String taskInfo;
+    private List<SendBean> sendBeanList;
 
     public static ISpout generate(String name) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         Class cls = Class.forName(name);
@@ -46,8 +50,18 @@ public abstract class ISpout extends CommonMetric implements Serializable {
 
     public abstract void nextTuple() throws Exception;
 
-    protected void declareOutputFields(OutputFieldsDeclarer declarer) {
-        declarer.declare(new Fields(AppConst.FIELDS));
+    public void declareOutputFields(OutputFieldsDeclarer declarer) {
+        if (getSendBeanList() != null) {
+            for (SendBean sendBean : getSendBeanList()) {
+                if (sendBean.getStreamId() != null) {
+                    declarer.declareStream(sendBean.getStreamId(), new Fields(sendBean.getOutput_fields()));
+                } else {
+                    declarer.declare(new Fields(sendBean.getOutput_fields()));
+                }
+            }
+        } else {
+            declarer.declare(new Fields(AppConst.FIELDS));
+        }
     }
 
     public void ack(Object object) {
@@ -64,5 +78,17 @@ public abstract class ISpout extends CommonMetric implements Serializable {
         int result = batchIndex.getAndIncrement();
         if (batchIndex.get() > 10000000) batchIndex.set(0);
         return taskInfo + result;
+    }
+
+    public Object grenerateUUIDMessageId() {
+        return UUID.randomUUID().toString();
+    }
+
+    public List<SendBean> getSendBeanList() {
+        return sendBeanList;
+    }
+
+    public void setSendBeanList(List<SendBean> sendBeanList) {
+        this.sendBeanList = sendBeanList;
     }
 }

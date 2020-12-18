@@ -4,6 +4,7 @@ import backtype.storm.generated.StreamInfo;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.OutputFieldsGetter;
 import backtype.storm.tuple.Tuple;
+import com.cqx.jstorm.bean.BoltBean;
 import com.cqx.jstorm.bolt.IBolt;
 import com.cqx.jstorm.util.AppConst;
 import com.cqx.jstorm.util.YamlParser;
@@ -19,7 +20,7 @@ import java.util.concurrent.BlockingQueue;
  * @author chenqixu
  */
 public class TestBolt extends TestBase {
-    protected String conf = getResourceClassPath("config.local.yaml");
+    protected String conf = null;
     protected AppConst appConst;
     protected IBolt iBolt;
     protected TopologyContext context;
@@ -61,6 +62,31 @@ public class TestBolt extends TestBase {
         }
     }
 
+    public void prepare(String conf, String boltName) throws Exception {
+        // 解析配置
+        YamlParser yamlParser = YamlParser.builder();
+        appConst = yamlParser.parserConf(conf);
+        context = TestTopologyContext.builder(appConst.getParamBean());
+        stormConf = new HashMap();
+        yamlParser.setConf(stormConf, appConst);
+        outputCollector = TestOutputCollector.build();
+        outputFieldsGetter = new OutputFieldsGetter();
+        for (BoltBean boltBean : appConst.getBoltBeanList()) {
+            if (boltBean.getName().equals(boltName)) {
+                iBolt = IBolt.generate(boltBean.getGenerateClassName());
+                iBolt.setTest(true);
+                iBolt.setContext(context);
+                iBolt.declareOutputFields(outputFieldsGetter);
+                outputCollector.set_fields(getFieldsDeclaration());
+                iBolt.setCollector(outputCollector);
+                iBolt.setReceiveBeanList(boltBean.getReceiveBeanList());
+                iBolt.setSendBeanList(boltBean.getSendBeanList());
+                iBolt.prepare(stormConf, context);
+                break;
+            }
+        }
+    }
+
     public Tuple buildTuple(String filed, Object value) {
         return TestTuple.builder().put(filed, value);
     }
@@ -69,16 +95,20 @@ public class TestBolt extends TestBase {
         return TestTuple.builder().put(sourceStreamId, filed, value);
     }
 
-    public BlockingQueue<HashMap<String, Object>> pollTupleMap(String streamId) {
-        return pollStreamIdMap().get(streamId);
+    public TestTuple pollTuple() {
+        return outputCollector.pollTuples();
     }
 
-    public HashMap<String, BlockingQueue<HashMap<String, Object>>> pollStreamIdMap() {
+    public TestTuple pollTuple(String streamId) {
+        return outputCollector.pollTuples(streamId);
+    }
+
+    public HashMap<String, BlockingQueue<TestTuple>> getAllTuples() {
         return outputCollector.pollStreamIdMap();
     }
 
     public void execute(Tuple input) throws Exception {
-        iBolt.execute(input);
+        if (iBolt != null) iBolt.execute(input);
     }
 
     private Map<String, StreamInfo> getFieldsDeclaration() {
@@ -86,6 +116,6 @@ public class TestBolt extends TestBase {
     }
 
     public void cleanup() {
-        iBolt.cleanup();
+        if (iBolt != null) iBolt.cleanup();
     }
 }

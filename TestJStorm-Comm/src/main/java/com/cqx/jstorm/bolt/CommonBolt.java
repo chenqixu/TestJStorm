@@ -5,6 +5,7 @@ import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseRichBolt;
 import backtype.storm.tuple.Tuple;
+import com.cqx.jstorm.bean.BoltBean;
 import com.cqx.jstorm.util.ExceptionMetrics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,12 @@ public class CommonBolt extends BaseRichBolt {
 
     public CommonBolt(String bolt_name) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
         this.iBolt = IBolt.generate(bolt_name);
+    }
+
+    public CommonBolt(BoltBean boltBean) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
+        this.iBolt = IBolt.generate(boltBean.getGenerateClassName());
+        this.iBolt.setReceiveBeanList(boltBean.getReceiveBeanList());
+        this.iBolt.setSendBeanList(boltBean.getSendBeanList());
     }
 
     @Override

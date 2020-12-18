@@ -2,6 +2,7 @@ package com.cqx.jstorm.spout;
 
 import com.cqx.common.utils.system.SleepUtil;
 import com.cqx.jstorm.test.TestSpout;
+import com.cqx.jstorm.test.TestTuple;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,9 +40,9 @@ public class FastFailureSpoutTest extends TestSpout {
             @Override
             public void run() {
                 while (true) {
-                    Object messageId = pollMessage();
-                    if (messageId != null) {
-                        iSpout.fail(messageId);
+                    TestTuple testTuple = pollTuple();
+                    if (testTuple != null) {
+                        iSpout.fail(testTuple.getMessageId());
                     }
                     SleepUtil.sleepMilliSecond(200);
                 }

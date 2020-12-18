@@ -6,7 +6,6 @@ import org.yaml.snakeyaml.Yaml;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -40,6 +39,13 @@ public class YamlParser {
             if (is != null)
                 is.close();
         }
+        return appConst;
+    }
+
+    public AppConst parserMap(Map<Object, Object> map) throws IOException {
+        AppConst appConst = new AppConst();
+        // 解析
+        appConst.parserParam(map);
         return appConst;
     }
 

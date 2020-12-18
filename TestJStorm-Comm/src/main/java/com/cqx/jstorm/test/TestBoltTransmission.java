@@ -1,6 +1,5 @@
 package com.cqx.jstorm.test;
 
-import com.cqx.jstorm.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,73 +12,76 @@ import java.util.concurrent.BlockingQueue;
  *
  * @author chenqixu
  */
-public class TestBoltTransmission {
-
+public class TestBoltTransmission extends TestBase {
     private static final Logger logger = LoggerFactory.getLogger(TestBoltTransmission.class);
+    protected String conf;
     private TestBolt iBoltStart;
     private TestBolt iBoltEnd;
     private TestBoltTransmissionRunble testBoltTransmissionRunble;
+    private Thread testBoltTransmissionThread;
 
-    public TestBoltTransmission(TestBolt iBoltStart, TestBolt iBoltEnd) {
-        this.iBoltStart = iBoltStart;
-        this.iBoltEnd = iBoltEnd;
-        this.testBoltTransmissionRunble = new TestBoltTransmissionRunble();
+    public void prepare(String iBoltStartName, String iBoltEndName, String confPath) throws Exception {
+        iBoltStart = new TestBolt();
+        iBoltEnd = new TestBolt();
+        conf = getResourceClassPath(confPath);
+        iBoltStart.prepare(conf, iBoltStartName);
+        iBoltEnd.prepare(conf, iBoltEndName);
+        testBoltTransmissionRunble = new TestBoltTransmissionRunble();
+        testBoltTransmissionThread = new Thread(testBoltTransmissionRunble);
     }
 
     /**
      * 启动数据传输线程
      */
-    public void start() {
-        new Thread(testBoltTransmissionRunble).start();
+    public void startTask() {
+        if (testBoltTransmissionThread != null) testBoltTransmissionThread.start();
     }
 
     /**
      * 停止数据传输线程
      */
-    public void stop() {
-        testBoltTransmissionRunble.stop();
-        iBoltStart.cleanup();
-        iBoltEnd.cleanup();
+    public void stopTask() {
+        if (testBoltTransmissionRunble != null) testBoltTransmissionRunble.stop();
+        if (testBoltTransmissionThread != null)
+            try {
+                testBoltTransmissionThread.join();
+            } catch (InterruptedException e) {
+                logger.error(e.getMessage(), e);
+            }
+        if (iBoltStart != null) iBoltStart.cleanup();
+        if (iBoltEnd != null) iBoltEnd.cleanup();
+    }
+
+    /**
+     * 往第一个bolt发送数据
+     *
+     * @param testTuple
+     * @throws Exception
+     */
+    public void addTuple(TestTuple testTuple) throws Exception {
+        if (iBoltStart != null) iBoltStart.execute(testTuple);
     }
 
     /**
      * 数据传输线程
      */
-    class TestBoltTransmissionRunble implements Runnable {
-
-        // 线程状态
-        volatile boolean flag = true;
+    class TestBoltTransmissionRunble extends TestBaseRunable {
 
         @Override
-        public void run() {
-            while (flag) {
-                HashMap<String, BlockingQueue<HashMap<String, Object>>> tuplesMap = iBoltStart.pollStreamIdMap();
-                for (Map.Entry<String, BlockingQueue<HashMap<String, Object>>> entry : tuplesMap.entrySet()) {
-                    String streamId = entry.getKey();// streamId
-                    TestTuple testTuple = TestTuple.builder();// 每个streamId都有单独的Tuple
-                    BlockingQueue<HashMap<String, Object>> tuplesQueue = entry.getValue();// tpule queue
-                    HashMap<String, Object> fieldsMap;
-                    while ((fieldsMap = tuplesQueue.poll()) != null) {
-                        for (Map.Entry<String, Object> entry1 : fieldsMap.entrySet()) {
-                            String field = entry1.getKey();// field
-                            Object tuple = entry1.getValue();// tuple
-                            // 拼接tuple
-                            testTuple.put(streamId, field, tuple);
-                        }
-                        try {
-                            // 调用下游bolt
-                            iBoltEnd.execute(testTuple);
-                        } catch (Exception e) {
-                            logger.error(e.getMessage(), e);
-                        }
+        void exec() throws Exception {
+            HashMap<String, BlockingQueue<TestTuple>> tuplesMap = iBoltStart.getAllTuples();
+            for (Map.Entry<String, BlockingQueue<TestTuple>> entry : tuplesMap.entrySet()) {
+                BlockingQueue<TestTuple> tuplesQueue = entry.getValue();// tpule queue
+                TestTuple testTuple;
+                while ((testTuple = tuplesQueue.poll()) != null) {
+                    try {
+                        // 调用下游bolt
+                        iBoltEnd.execute(testTuple);
+                    } catch (Exception e) {
+                        logger.error(e.getMessage(), e);
                     }
                 }
-                Utils.sleep(1);
             }
-        }
-
-        public void stop() {
-            flag = false;
         }
     }
 }
