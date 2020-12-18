@@ -11,6 +11,7 @@ jstorm:
 topology:
   worker_num: 1
   ack_num: 1
+  cpu_slotNum: 100
   worker_memory: 1024
   name: DpiParserGN
   ip: 127.0.0.1
@@ -168,4 +169,3 @@ param:
       topic: 
 
 classload:
-  - "com.newland.storm.etl.dpi.utils.KafkaClientJAASLoader"

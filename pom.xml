@@ -6,6 +6,8 @@
         <module>TestJStorm-Comm</module>
         <module>TestJStorm-Agent</module>
         <module>TestJStorm-App-Dpi</module>
+        <module>TestJStorm-SQL</module>
+        <module>TestJStorm-Connector</module>
     </modules>
     <groupId>com.cqx</groupId>
     <version>1.0.0</version>
