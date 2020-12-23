@@ -13,6 +13,7 @@ public class SpoutBean {
     private static final String SINGLE_CLASS = "java.util.LinkedHashMap";
     private static final String MULTIPLE_CLASS = "java.util.ArrayList";
     private String name;
+    private String aliasname;//别名
     private int parall;
     private String packagename;
     private List<SendBean> sendBeanList;
@@ -47,6 +48,7 @@ public class SpoutBean {
     public SpoutBean parserMap(Map<String, ?> param) {
         setParall((Integer) param.get("parall"));
         setName((String) param.get("name"));
+        setAliasname((String) param.get("aliasname"));
         setPackagename((String) param.get("packagename"));
         //定义发送对象
         Object send = param.get("send");
@@ -94,5 +96,14 @@ public class SpoutBean {
 
     public void setSendBeanList(List<SendBean> sendBeanList) {
         this.sendBeanList = sendBeanList;
+    }
+
+    public String getAliasname() {
+        if (aliasname == null || aliasname.length() == 0) return getName();
+        else return aliasname;
+    }
+
+    public void setAliasname(String aliasname) {
+        this.aliasname = aliasname;
     }
 }

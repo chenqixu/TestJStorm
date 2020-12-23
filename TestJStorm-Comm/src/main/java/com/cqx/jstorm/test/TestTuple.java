@@ -139,17 +139,17 @@ public class TestTuple implements Tuple {
 
     @Override
     public Integer getIntegerByField(String field) {
-        return (Integer) valueObjectMap.get(field);
+        return Integer.valueOf(valueMap.get(field));
     }
 
     @Override
     public Long getLongByField(String field) {
-        return null;
+        return Long.valueOf(valueMap.get(field));
     }
 
     @Override
     public Boolean getBooleanByField(String field) {
-        return null;
+        return Boolean.valueOf(valueMap.get(field));
     }
 
     @Override

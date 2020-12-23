@@ -9,7 +9,6 @@ import com.cqx.jstorm.bolt.IBolt;
 import com.cqx.jstorm.util.AppConst;
 import com.cqx.jstorm.util.YamlParser;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
@@ -28,38 +27,8 @@ public class TestBolt extends TestBase {
     protected TestOutputCollector outputCollector;
     protected OutputFieldsGetter outputFieldsGetter;
 
-    public static TestBolt builder(IBolt iBolt) {
-        TestBolt testBolt = new TestBolt();
-        testBolt.iBolt = iBolt;
-        try {
-            testBolt.prepare(testBolt.conf);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
-            testBolt.iBolt.prepare(testBolt.stormConf, testBolt.context);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return testBolt;
-    }
-
-    public void prepare(String conf) throws IOException {
-        // 解析配置
-        YamlParser yamlParser = YamlParser.builder();
-        appConst = yamlParser.parserConf(conf);
-        context = TestTopologyContext.builder(appConst.getParamBean());
-        stormConf = new HashMap();
-        yamlParser.setConf(stormConf, appConst);
-        outputCollector = TestOutputCollector.build();
-        outputFieldsGetter = new OutputFieldsGetter();
-        if (iBolt != null) {
-            iBolt.setTest(true);
-            iBolt.setContext(context);
-            iBolt.declareOutputFields(outputFieldsGetter);
-            outputCollector.set_fields(getFieldsDeclaration());
-            iBolt.setCollector(outputCollector);
-        }
+    public void prepare(String conf) throws Exception {
+        prepare(conf, null);
     }
 
     public void prepare(String conf, String boltName) throws Exception {
@@ -71,19 +40,27 @@ public class TestBolt extends TestBase {
         yamlParser.setConf(stormConf, appConst);
         outputCollector = TestOutputCollector.build();
         outputFieldsGetter = new OutputFieldsGetter();
-        for (BoltBean boltBean : appConst.getBoltBeanList()) {
-            if (boltBean.getName().equals(boltName)) {
-                iBolt = IBolt.generate(boltBean.getGenerateClassName());
-                iBolt.setTest(true);
-                iBolt.setContext(context);
-                iBolt.declareOutputFields(outputFieldsGetter);
-                outputCollector.set_fields(getFieldsDeclaration());
-                iBolt.setCollector(outputCollector);
-                iBolt.setReceiveBeanList(boltBean.getReceiveBeanList());
-                iBolt.setSendBeanList(boltBean.getSendBeanList());
-                iBolt.prepare(stormConf, context);
-                break;
+        if (boltName != null) {
+            for (BoltBean boltBean : appConst.getBoltBeanList()) {
+                if (boltBean.getName().equals(boltName)) {
+                    iBolt = IBolt.generate(boltBean.getGenerateClassName());
+                    iBolt.setTest(true);
+                    iBolt.setContext(context);
+                    iBolt.setCollector(outputCollector);
+                    iBolt.setReceiveBeanList(boltBean.getReceiveBeanList());
+                    iBolt.setSendBeanList(boltBean.getSendBeanList());
+                    iBolt.declareOutputFields(outputFieldsGetter);
+                    outputCollector.set_fields(getFieldsDeclaration());
+                    iBolt.prepare(stormConf, context);
+                    break;
+                }
             }
+        } else if (iBolt != null) {
+            iBolt.setTest(true);
+            iBolt.setContext(context);
+            iBolt.setCollector(outputCollector);
+            iBolt.declareOutputFields(outputFieldsGetter);
+            outputCollector.set_fields(getFieldsDeclaration());
         }
     }
 

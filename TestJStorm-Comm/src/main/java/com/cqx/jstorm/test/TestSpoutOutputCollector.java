@@ -16,7 +16,7 @@ import java.util.concurrent.BlockingQueue;
  * @author chenqixu
  */
 public class TestSpoutOutputCollector extends SpoutOutputCollector {
-    private static Logger logger = LoggerFactory.getLogger(TestSpoutOutputCollector.class);
+    private static final Logger logger = LoggerFactory.getLogger(TestSpoutOutputCollector.class);
     private TestSpoutOutputCollectorCb testSpoutOutputCollectorCb;
 
     public TestSpoutOutputCollector(ISpoutOutputCollector delegate) {

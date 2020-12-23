@@ -19,6 +19,7 @@ topology:
 
 spout:
   name: DpiParserSpout
+  aliasname:
   packagename: com.newland.storm.etl.dpi.spout
   parall: 1
   send:
@@ -29,6 +30,7 @@ spout:
 
 bolt:
   - name: DpiParserBolt
+    aliasname:
     packagename: com.newland.storm.etl.dpi.bolt
     parall: 1
     groupingcode: FIELDSGROUPING
@@ -69,6 +71,8 @@ bolt:
           - values
 
 param:
+  DpiParserSpout:
+    test: 1
   template_id: "fjbi_jstorm_lte"
   sourDir: d:\tmp\data\dpi\dpi_ltedata\streaminput\
   backDir: d:\tmp\data\dpi\dpi_ltedata\streambackup\

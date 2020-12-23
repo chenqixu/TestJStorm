@@ -18,6 +18,7 @@ public class KafkaSourcePrintSinkTest extends TestSpoutBoltTransmission {
         prepare("KafkaSourceConnector",
                 "PrintSinkConnector",
                 "kafka_to_print_mix.config.yaml");
+//                "kafka_to_print.config.yaml");
     }
 
     @After

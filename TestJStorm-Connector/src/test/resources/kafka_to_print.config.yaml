@@ -24,8 +24,13 @@ spout:
   send:
     - streamId:
       output_fields:
-        - xdr_id
+        - imsi
+        - imei
         - msisdn
+        - procedure_type
+        - procedure_start_time
+        - tac
+        - cell_id
 
 bolt:
   - name: OperatorBolt
@@ -52,8 +57,13 @@ bolt:
         streamId:
         fieldsgrouping_fields:
         output_fields:
-          - xdr_id
+          - imsi
+          - imei
           - msisdn
+          - procedure_type
+          - procedure_start_time
+          - tac
+          - cell_id
 
 param:
   properties.bootstrap.servers: 10.1.8.200:9092,10.1.8.201:9092,10.1.8.202:9092

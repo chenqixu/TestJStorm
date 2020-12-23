@@ -4,6 +4,7 @@ import backtype.storm.Config;
 import backtype.storm.LocalCluster;
 import backtype.storm.StormSubmitter;
 import backtype.storm.topology.BoltDeclarer;
+import backtype.storm.topology.SpoutDeclarer;
 import backtype.storm.topology.TopologyBuilder;
 import backtype.storm.tuple.Fields;
 import com.alibaba.jstorm.client.ConfigExtension;
@@ -74,10 +75,16 @@ public class SubmitTopology {
      */
     private void addSpout(TopologyBuilder builder) throws IllegalAccessException, ClassNotFoundException, InstantiationException {
         for (SpoutBean spoutBean : appConst.getSpoutBeanList()) {
-            builder.setSpout(spoutBean.getName(),
+            SpoutDeclarer spoutDeclarer = builder.setSpout(spoutBean.getAliasname(),
                     new CommonSpout(spoutBean),
                     spoutBean.getParall());
-            topologySpoutTaskParallelismMap.put(spoutBean.getName(), spoutBean.getParall());
+            Map spoutParam = (Map) appConst.getParamBean().get(spoutBean.getAliasname());
+            if (spoutParam != null) {
+                appConst.getParamBean().remove(spoutBean.getAliasname());
+                logger.info("{} add-spoutParam：{}", spoutBean.getAliasname(), spoutParam);
+                spoutDeclarer.addConfigurations(spoutParam);
+            }
+            topologySpoutTaskParallelismMap.put(spoutBean.getAliasname(), spoutBean.getParall());
         }
     }
 
@@ -91,9 +98,15 @@ public class SubmitTopology {
      */
     private void addBolt(TopologyBuilder builder) throws IllegalAccessException, ClassNotFoundException, InstantiationException {
         for (BoltBean boltBean : appConst.getBoltBeanList()) {
-            BoltDeclarer boltDeclarer = builder.setBolt(boltBean.getName(),
+            BoltDeclarer boltDeclarer = builder.setBolt(boltBean.getAliasname(),
                     new CommonBolt(boltBean),
                     boltBean.getParall());
+            Map boltParam = (Map) appConst.getParamBean().get(boltBean.getAliasname());
+            if (boltParam != null) {
+                appConst.getParamBean().remove(boltBean.getAliasname());
+                logger.info("{} add-boltParam：{}", boltBean.getAliasname(), boltParam);
+                boltDeclarer.addConfigurations(boltParam);
+            }
             switch (boltBean.getGroupingcode()) {
                 case FIELDSGROUPING:
                     for (ReceiveBean receiveBean : boltBean.getReceiveBeanList()) {
@@ -139,7 +152,7 @@ public class SubmitTopology {
                 default:
                     break;
             }
-            topologyBoltTaskParallelismMap.put(boltBean.getName(), boltBean.getParall());
+            topologyBoltTaskParallelismMap.put(boltBean.getAliasname(), boltBean.getParall());
         }
     }
 

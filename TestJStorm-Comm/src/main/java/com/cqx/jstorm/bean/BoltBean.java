@@ -11,6 +11,7 @@ import java.util.Map;
  */
 public class BoltBean {
     private String name;
+    private String aliasname;//别名
     private String packagename;
     private int parall;
     private GroupingCode groupingcode;
@@ -34,6 +35,7 @@ public class BoltBean {
 
     public BoltBean parserMap(Map<String, ?> param) {
         setName((String) param.get("name"));
+        setAliasname((String) param.get("aliasname"));
         setPackagename((String) param.get("packagename"));
         setParall((Integer) param.get("parall"));
         setGroupingcode(GroupingCode.valueOf((String) param.get("groupingcode")));
@@ -108,5 +110,14 @@ public class BoltBean {
 
     public void setSendBeanList(List<SendBean> sendBeanList) {
         this.sendBeanList = sendBeanList;
+    }
+
+    public String getAliasname() {
+        if (aliasname == null || aliasname.length() == 0) return getName();
+        else return aliasname;
+    }
+
+    public void setAliasname(String aliasname) {
+        this.aliasname = aliasname;
     }
 }

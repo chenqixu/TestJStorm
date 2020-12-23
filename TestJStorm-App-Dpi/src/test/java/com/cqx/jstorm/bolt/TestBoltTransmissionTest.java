@@ -14,7 +14,7 @@ public class TestBoltTransmissionTest extends TestBoltTransmission {
     public void setUp() throws Exception {
         prepare("EmitTestBolt",
                 "EmitTestGetBolt",
-                "");
+                "config.local.yaml");
     }
 
     @After

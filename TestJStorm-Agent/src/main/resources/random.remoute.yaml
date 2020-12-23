@@ -1,0 +1,60 @@
+jstorm:
+  nimbus_host: 10.1.8.203
+  nimbus_thrift_port: 17627
+  storm_zookeeper_servers:
+    - "10.1.8.198"
+    - "10.1.4.185"
+    - "10.1.4.186"
+  storm_zookeeper_port: 2183
+  storm_zookeeper_root: /udap/collect_jstorm
+
+topology:
+  worker_num: 1
+  ack_num: 0
+  worker_memory: 1073741824
+  cpu_slotNum: 100
+  jvm_options:
+  name: RandomTest
+  ip: 10.1.8.203
+
+spout:
+  name: RandomSpout
+  aliasname:
+  packagename: com.cqx.jstorm.spout
+  parall: 1
+  send:
+    - streamId:
+      output_fields:
+       - random
+
+bolt:
+  - name: RandomGetBolt
+    aliasname: RandomGetBolt1
+    packagename: com.cqx.jstorm.bolt
+    parall: 1
+    groupingcode: LOCALFIRSTGROUPING
+    receive:
+      - componentId: RandomSpout
+        streamId:
+        fieldsgrouping_fields:
+        output_fields:
+          - random
+  - name: RandomGetBolt
+    aliasname: RandomGetBolt2
+    packagename: com.cqx.jstorm.bolt
+    parall: 1
+    groupingcode: LOCALFIRSTGROUPING
+    receive:
+      - componentId: RandomSpout
+        fieldsgrouping_fields:
+        streamId:
+        output_fields:
+          - random
+
+param:
+  s-random: 1000
+  RandomGetBolt1:
+    tns: "101"
+  RandomGetBolt2:
+    tns: "102"
+  tns: "222"

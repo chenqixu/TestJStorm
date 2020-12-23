@@ -15,7 +15,7 @@ import java.util.concurrent.BlockingQueue;
  * @author chenqixu
  */
 public class TestOutputCollector extends OutputCollector {
-    private static Logger logger = LoggerFactory.getLogger(TestOutputCollector.class);
+    private static final Logger logger = LoggerFactory.getLogger(TestOutputCollector.class);
     private TestIOutputCollector testIOutputCollector;
 
     public TestOutputCollector(TestIOutputCollector delegate) {

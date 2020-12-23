@@ -26,6 +26,10 @@ public class TestSpout extends TestBase {
     protected TestSpoutOutputCollector collector;
     protected OutputFieldsGetter outputFieldsGetter;
 
+    public void prepare(String conf) throws Exception {
+        prepare(conf, null);
+    }
+
     public void prepare(String conf, String spoutName) throws Exception {
         // 解析配置
         YamlParser yamlParser = YamlParser.builder();
@@ -35,31 +39,21 @@ public class TestSpout extends TestBase {
         yamlParser.setConf(stormConf, appConst);
         collector = TestSpoutOutputCollector.build();
         outputFieldsGetter = new OutputFieldsGetter();
-        for (SpoutBean spoutBean : appConst.getSpoutBeanList()) {
-            if (spoutBean.getName().equals(spoutName)) {
-                iSpout = ISpout.generate(spoutBean.getGenerateClassName());
-                iSpout.setTest(true);
-                iSpout.setCollector(collector);
-                iSpout.setContext(context);
-                iSpout.declareOutputFields(outputFieldsGetter);
-                collector.set_fields(getFieldsDeclaration());
-                iSpout.setSendBeanList(spoutBean.getSendBeanList());
-                iSpout.open(stormConf, context);
-                break;
+        if (spoutName != null) {
+            for (SpoutBean spoutBean : appConst.getSpoutBeanList()) {
+                if (spoutBean.getName().equals(spoutName)) {
+                    iSpout = ISpout.generate(spoutBean.getGenerateClassName());
+                    iSpout.setTest(true);
+                    iSpout.setCollector(collector);
+                    iSpout.setContext(context);
+                    iSpout.setSendBeanList(spoutBean.getSendBeanList());
+                    iSpout.declareOutputFields(outputFieldsGetter);
+                    collector.set_fields(getFieldsDeclaration());
+                    iSpout.open(stormConf, context);
+                    break;
+                }
             }
-        }
-    }
-
-    public void prepare(String conf) throws Exception {
-        // 解析配置
-        YamlParser yamlParser = YamlParser.builder();
-        appConst = yamlParser.parserConf(conf);
-        context = TestTopologyContext.builder(appConst.getParamBean());
-        stormConf = new HashMap();
-        yamlParser.setConf(stormConf, appConst);
-        collector = TestSpoutOutputCollector.build();
-        outputFieldsGetter = new OutputFieldsGetter();
-        if (iSpout != null) {
+        } else if (iSpout != null) {
             iSpout.setTest(true);
             iSpout.setCollector(collector);
             iSpout.setContext(context);
