@@ -31,6 +31,10 @@ public class RandomSpout extends ISpout {
         int randomInt = random.nextInt(sed);
         this.collector.emit(new Values(randomInt));
         logger.info("send：{}", randomInt);
+        //判断是单还是双
+        if (randomInt % 2 == 0) {
+            throw new Exception(String.format("%s mod 2 == 0", randomInt));
+        }
         Utils.sleep(randomInt);
     }
 }

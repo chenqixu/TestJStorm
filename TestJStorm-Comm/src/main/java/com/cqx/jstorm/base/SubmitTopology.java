@@ -78,6 +78,7 @@ public class SubmitTopology {
             SpoutDeclarer spoutDeclarer = builder.setSpout(spoutBean.getAliasname(),
                     new CommonSpout(spoutBean),
                     spoutBean.getParall());
+            //获取Spout的自定义参数，并进行设置，然后从公共参数中移除
             Map spoutParam = (Map) appConst.getParamBean().get(spoutBean.getAliasname());
             if (spoutParam != null) {
                 appConst.getParamBean().remove(spoutBean.getAliasname());
@@ -101,6 +102,7 @@ public class SubmitTopology {
             BoltDeclarer boltDeclarer = builder.setBolt(boltBean.getAliasname(),
                     new CommonBolt(boltBean),
                     boltBean.getParall());
+            //获取Bolt的自定义参数，并进行设置，然后从公共参数中移除
             Map boltParam = (Map) appConst.getParamBean().get(boltBean.getAliasname());
             if (boltParam != null) {
                 appConst.getParamBean().remove(boltBean.getAliasname());

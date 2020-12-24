@@ -35,14 +35,13 @@ public class CommonBolt extends BaseRichBolt {
 
     @Override
     public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
-        this.exceptionMetrics = ExceptionMetrics.getInstance();
+        this.exceptionMetrics = ExceptionMetrics.getInstance(stormConf);
         this.exceptionMetrics.registerBolt(iBolt);
         this.iBolt.setContext(context);
         this.iBolt.setCollector(collector);
         try {
             this.iBolt.prepare(stormConf, context);
         } catch (Exception e) {
-            this.logger.error(e.getMessage(), e);
             this.exceptionMetrics.markExceptionSingle("组件初始化发生异常", e);
         }
     }
@@ -52,7 +51,6 @@ public class CommonBolt extends BaseRichBolt {
         try {
             this.iBolt.execute(input);
         } catch (Exception e) {
-            this.logger.error(e.getMessage(), e);
             this.exceptionMetrics.markException("组件处理发生异常", e);
         }
     }

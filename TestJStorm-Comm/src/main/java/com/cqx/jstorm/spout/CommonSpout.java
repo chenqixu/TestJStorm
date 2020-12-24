@@ -33,14 +33,13 @@ public class CommonSpout extends BaseRichSpout {
 
     @Override
     public void open(Map conf, TopologyContext context, SpoutOutputCollector collector) {
-        this.exceptionMetrics = ExceptionMetrics.getInstance();
+        this.exceptionMetrics = ExceptionMetrics.getInstance(conf);
         this.exceptionMetrics.registerSpout(iSpout);
         this.iSpout.setContext(context);
         this.iSpout.setCollector(collector);
         try {
             this.iSpout.open(conf, context);
         } catch (Exception e) {
-            this.logger.error(e.getMessage(), e);
             this.exceptionMetrics.markExceptionSingle("组件初始化发生异常", e);
         }
     }
@@ -50,7 +49,6 @@ public class CommonSpout extends BaseRichSpout {
         try {
             this.iSpout.nextTuple();
         } catch (Exception e) {
-            this.logger.error(e.getMessage(), e);
             this.exceptionMetrics.markException("组件处理发生异常", e);
         }
     }

@@ -58,3 +58,4 @@ param:
   RandomGetBolt2:
     tns: "102"
   tns: "222"
+  runtime.suppression.exception: true
