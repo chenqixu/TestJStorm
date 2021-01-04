@@ -28,6 +28,14 @@ public class KafkaConsumerUtil<K, V> {
         init(properties);
     }
 
+    public KafkaConsumerUtil(Map stormConf) throws IOException {
+        Properties properties = initConf(stormConf);
+        String kafka_username = properties.getProperty("newland.kafka_username");
+        String kafka_password = properties.getProperty("newland.kafka_password");
+        Configuration.setConfiguration(new SimpleClientConfiguration(kafka_username, kafka_password));
+        consumer = new KafkaConsumer<>(properties);
+    }
+
     public KafkaConsumerUtil(String conf, String kafka_username, String kafka_password) throws IOException {
         Properties properties = new Properties();
         properties.load(new FileInputStream(conf));

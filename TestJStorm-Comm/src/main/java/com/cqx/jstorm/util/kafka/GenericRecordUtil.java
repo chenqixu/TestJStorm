@@ -17,7 +17,7 @@ import java.util.Map;
  */
 public class GenericRecordUtil {
 
-    private static Logger logger = LoggerFactory.getLogger(GenericRecordUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(GenericRecordUtil.class);
     private Map<String, Schema> schemaMap = new HashMap<>();
     private Map<String, Map<String, Schema.Type>> schemaFieldMap = new HashMap<>();
     private Map<String, RecordConvertor> recordConvertorMap = new HashMap<>();
@@ -105,6 +105,36 @@ public class GenericRecordUtil {
                             obj = Long.valueOf(value);
                         }
                         break;
+                    case BOOLEAN:
+                        if (value.length() == 0) {
+                            obj = false;
+                        } else {
+                            obj = Boolean.valueOf(value);
+                        }
+                        break;
+                    case FLOAT:
+                        if (value.length() == 0) {
+                            obj = 0;
+                        } else {
+                            obj = Float.valueOf(value);
+                        }
+                        break;
+                    case DOUBLE:
+                        if (value.length() == 0) {
+                            obj = 0;
+                        } else {
+                            obj = Double.valueOf(value);
+                        }
+                        break;
+                    case BYTES:
+                    case UNION:
+                    case MAP:
+                    case ENUM:
+                    case NULL:
+                    case ARRAY:
+                    case FIXED:
+                    case RECORD:
+                    case STRING:
                     default:
                         break;
                 }
@@ -113,6 +143,48 @@ public class GenericRecordUtil {
             }
         }
         logger.debug("genericRecord：{}", genericRecord);
+        return recordConvertor.recordToBinary(genericRecord);
+    }
+
+    /**
+     * 随机产生一条数据
+     *
+     * @param topic
+     * @return
+     */
+    public byte[] genericRandomRecord(String topic) {
+        Schema schema = schemaMap.get(topic);
+        RecordConvertor recordConvertor = recordConvertorMap.get(topic);
+        GenericRecord genericRecord = new GenericData.Record(schema);
+        Map<String, Schema.Type> _schemaFieldMap = schemaFieldMap.get(topic);
+        for (Map.Entry<String, Schema.Type> entry : _schemaFieldMap.entrySet()) {
+            String field = schema.getField(entry.getKey()).name();
+            if (field != null && field.length() > 0) {
+                Schema.Type type = _schemaFieldMap.get(field);
+                String value = "test";
+                Object obj = value;
+                switch (type) {
+                    case INT:
+                        if (value.length() == 0) {
+                            obj = 0;
+                        } else {
+                            obj = Integer.valueOf(value);
+                        }
+                        break;
+                    case LONG:
+                        if (value.length() == 0) {
+                            obj = 0L;
+                        } else {
+                            obj = Long.valueOf(value);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                genericRecord.put(field, obj);
+            }
+        }
+        logger.info("genericRandomRecord：{}", genericRecord);
         return recordConvertor.recordToBinary(genericRecord);
     }
 }

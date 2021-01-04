@@ -36,6 +36,22 @@ public class TestSpout extends TestBase {
         appConst = yamlParser.parserConf(conf);
         context = TestTopologyContext.builder(appConst.getParamBean());
         stormConf = new HashMap();
+        // spout自己的参数设置
+        if (spoutName != null) {
+            Map spoutParam = (Map) appConst.getParamBean().get(spoutName);
+            if (spoutParam != null) {
+                appConst.getParamBean().remove(spoutName);
+                stormConf.putAll(spoutParam);
+            }
+        } else if (iSpout != null) {
+            String _spoutName = iSpout.getClass().getSimpleName();
+            Map spoutParam = (Map) appConst.getParamBean().get(_spoutName);
+            if (spoutParam != null) {
+                appConst.getParamBean().remove(_spoutName);
+                stormConf.putAll(spoutParam);
+            }
+        }
+        // spout配置
         yamlParser.setConf(stormConf, appConst);
         collector = TestSpoutOutputCollector.build();
         outputFieldsGetter = new OutputFieldsGetter();

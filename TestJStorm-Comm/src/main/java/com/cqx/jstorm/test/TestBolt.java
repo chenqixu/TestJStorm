@@ -37,6 +37,22 @@ public class TestBolt extends TestBase {
         appConst = yamlParser.parserConf(conf);
         context = TestTopologyContext.builder(appConst.getParamBean());
         stormConf = new HashMap();
+        // bolt自己的参数设置
+        if (boltName != null) {
+            Map boltParam = (Map) appConst.getParamBean().get(boltName);
+            if (boltParam != null) {
+                appConst.getParamBean().remove(boltName);
+                stormConf.putAll(boltParam);
+            }
+        } else if (iBolt != null) {
+            String _boltName = iBolt.getClass().getSimpleName();
+            Map boltParam = (Map) appConst.getParamBean().get(_boltName);
+            if (boltParam != null) {
+                appConst.getParamBean().remove(_boltName);
+                stormConf.putAll(boltParam);
+            }
+        }
+        // bolt设置
         yamlParser.setConf(stormConf, appConst);
         outputCollector = TestOutputCollector.build();
         outputFieldsGetter = new OutputFieldsGetter();

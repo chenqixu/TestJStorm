@@ -29,7 +29,7 @@ public class TestSpoutBoltTransmission extends TestBase {
         testSpout.prepare(conf, spoutName);
         testBolt.prepare(conf, boltName);
         producer = new Producer();
-        consummer = new Consummer();
+        consummer = new Consummer(testSpout.getAllTuples());
         threadProducer = new Thread(producer);
         threadConsummer = new Thread(consummer);
     }
@@ -80,9 +80,14 @@ public class TestSpoutBoltTransmission extends TestBase {
      */
     class Consummer extends TestBaseRunable {
 
+        HashMap<String, BlockingQueue<TestTuple>> tuplesMap;
+
+        Consummer(HashMap<String, BlockingQueue<TestTuple>> tuplesMap) {
+            this.tuplesMap = tuplesMap;
+        }
+
         @Override
         void exec() throws Exception {
-            HashMap<String, BlockingQueue<TestTuple>> tuplesMap = testSpout.getAllTuples();
             for (Map.Entry<String, BlockingQueue<TestTuple>> entry : tuplesMap.entrySet()) {
                 BlockingQueue<TestTuple> tuplesQueue = entry.getValue();// tpule queue
                 TestTuple testTuple;

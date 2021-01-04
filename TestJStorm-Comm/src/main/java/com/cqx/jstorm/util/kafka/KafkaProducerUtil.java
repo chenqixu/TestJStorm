@@ -28,6 +28,14 @@ public class KafkaProducerUtil<K, V> {
         producer = new KafkaProducer<>(properties);
     }
 
+    public KafkaProducerUtil(Map stormConf) throws IOException {
+        Properties properties = initConf(stormConf);
+        String kafka_username = properties.getProperty("newland.kafka_username");
+        String kafka_password = properties.getProperty("newland.kafka_password");
+        Configuration.setConfiguration(new SimpleClientConfiguration(kafka_username, kafka_password));
+        producer = new KafkaProducer<>(properties);
+    }
+
     /**
      * 使用内存中的配置来替代每一台的配置文件
      *
