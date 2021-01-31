@@ -1,0 +1,36 @@
+package com.cqx.jstorm.dpi.bolt;
+
+import backtype.storm.task.TopologyContext;
+import backtype.storm.tuple.Tuple;
+import com.cqx.jstorm.comm.bolt.IBolt;
+import com.cqx.jstorm.comm.util.AppConst;
+import com.cqx.jstorm.dpi.utils.DpiSocketClient;
+
+import java.util.Map;
+
+/**
+ * EmitSocketClientBolt
+ *
+ * @author chenqixu
+ */
+public class EmitSocketClientBolt extends IBolt {
+
+    private DpiSocketClient dpiSocketClient;
+
+    @Override
+    public void prepare(Map stormConf, TopologyContext context) throws Exception {
+        dpiSocketClient = new DpiSocketClient("127.0.0.1", 10991);
+        dpiSocketClient.connect();
+    }
+
+    @Override
+    public void execute(Tuple input) throws Exception {
+        String value = input.getStringByField(AppConst.FIELDS);
+        dpiSocketClient.sendMsg(value);
+    }
+
+    @Override
+    public void cleanup() {
+        dpiSocketClient.disconnect();
+    }
+}

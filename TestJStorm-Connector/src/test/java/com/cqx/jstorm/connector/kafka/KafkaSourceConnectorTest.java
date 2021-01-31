@@ -1,8 +1,8 @@
 package com.cqx.jstorm.connector.kafka;
 
-import com.cqx.jstorm.test.TestSpout;
-import com.cqx.jstorm.test.TestTuple;
-import com.cqx.jstorm.util.Utils;
+import com.cqx.jstorm.comm.test.TestSpout;
+import com.cqx.jstorm.comm.test.TestTuple;
+import com.cqx.jstorm.comm.util.Utils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

@@ -1,9 +1,9 @@
 package com.cqx.jstorm.sql.util;
 
-import com.cqx.jstorm.bean.BoltBean;
-import com.cqx.jstorm.bean.GroupingCode;
-import com.cqx.jstorm.bean.ReceiveBean;
-import com.cqx.jstorm.bean.SendBean;
+import com.cqx.jstorm.comm.bean.BoltBean;
+import com.cqx.jstorm.comm.bean.GroupingCode;
+import com.cqx.jstorm.comm.bean.ReceiveBean;
+import com.cqx.jstorm.comm.bean.SendBean;
 
 import java.util.ArrayList;
 import java.util.HashMap;

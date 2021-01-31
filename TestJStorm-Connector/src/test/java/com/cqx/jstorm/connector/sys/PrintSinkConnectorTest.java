@@ -1,8 +1,8 @@
 package com.cqx.jstorm.connector.sys;
 
 import com.cqx.jstorm.sql.bean.Column;
-import com.cqx.jstorm.test.TestBolt;
-import com.cqx.jstorm.test.TestTuple;
+import com.cqx.jstorm.comm.test.TestBolt;
+import com.cqx.jstorm.comm.test.TestTuple;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

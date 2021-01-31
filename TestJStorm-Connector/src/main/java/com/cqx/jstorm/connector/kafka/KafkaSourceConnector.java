@@ -2,11 +2,12 @@ package com.cqx.jstorm.connector.kafka;
 
 import backtype.storm.task.TopologyContext;
 import backtype.storm.tuple.Values;
-import com.cqx.jstorm.bean.SendBean;
-import com.cqx.jstorm.spout.ISpout;
+import com.cqx.jstorm.comm.bean.SendBean;
+import com.cqx.jstorm.connector.kafka.util.KafkaFormatUtil;
+import com.cqx.jstorm.comm.spout.ISpout;
 import com.cqx.jstorm.sql.bean.Column;
-import com.cqx.jstorm.util.kafka.KafkaConsumerUtil;
-import com.cqx.jstorm.util.kafka.KafkaSecurityUtil;
+import com.cqx.jstorm.comm.util.kafka.KafkaConsumerUtil;
+import com.cqx.jstorm.comm.util.kafka.KafkaSecurityUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

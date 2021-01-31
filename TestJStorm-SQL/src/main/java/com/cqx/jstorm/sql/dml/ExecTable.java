@@ -1,17 +1,16 @@
 package com.cqx.jstorm.sql.dml;
 
-import com.cqx.jstorm.base.KillTopology;
-import com.cqx.jstorm.base.SubmitTopology;
-import com.cqx.jstorm.bean.AgentBean;
-import com.cqx.jstorm.bean.ReceiveBean;
-import com.cqx.jstorm.bean.SendBean;
+import com.cqx.jstorm.comm.base.SubmitTopology;
+import com.cqx.jstorm.comm.bean.AgentBean;
+import com.cqx.jstorm.comm.bean.ReceiveBean;
+import com.cqx.jstorm.comm.bean.SendBean;
 import com.cqx.jstorm.sql.bean.Table;
 import com.cqx.jstorm.sql.ddl.IDDL;
 import com.cqx.jstorm.sql.util.AppConst;
 import com.cqx.jstorm.sql.util.BoltBuilder;
 import com.cqx.jstorm.sql.util.SpoutBuilder;
 import com.cqx.jstorm.sql.util.YamlBuilder;
-import com.cqx.jstorm.util.ArgsParser;
+import com.cqx.jstorm.comm.util.ArgsParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,7 +1,7 @@
 package com.cqx.jstorm.connector.transmission;
 
 import backtype.storm.utils.Utils;
-import com.cqx.jstorm.test.TestSpoutBoltTransmission;
+import com.cqx.jstorm.comm.test.TestSpoutBoltTransmission;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

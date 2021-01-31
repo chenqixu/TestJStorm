@@ -1,0 +1,82 @@
+jstorm:
+  nimbus_host: 10.1.8.203
+  nimbus_thrift_port: 17627
+  storm_zookeeper_servers:
+    - "10.1.8.198"
+    - "10.1.4.185"
+    - "10.1.4.186"
+  storm_zookeeper_port: 2183
+  storm_zookeeper_root: /udap/collect_jstorm
+
+topology:
+  worker_num: 1
+  ack_num: 0
+  worker_memory: 2147483648
+  cpu_slotNum: 0
+  jvm_options:
+  name: kafka_to_print
+  ip: 10.1.8.203
+
+spout:
+  - name: KafkaSourceConnector
+    packagename: com.cqx.jstorm.connector.kafka
+    parall: 1
+    send:
+      - streamId:
+        output_fields:
+          - imsi
+          - imei
+          - msisdn
+          - procedure_type
+          - procedure_start_time
+          - tac
+          - cell_id
+
+bolt:
+  - name: OperatorBolt
+    packagename: com.cqx.jstorm.connector.operator
+    parall: 1
+    groupingcode: FIELDSGROUPING
+    receive:
+      - componentId: KafkaSourceConnector
+        streamId:
+        fieldsgrouping_fields:
+          - msisdn
+        output_fields:
+          - msisdn
+          - cnt
+    send:
+      - streamId:
+        output_fields:
+          - msisdn
+          - cnt
+  - name: PrintSinkConnector
+    packagename: com.cqx.jstorm.connector.sys
+    parall: 1
+    groupingcode: LOCALFIRSTGROUPING
+    receive:
+      - componentId: OperatorBolt
+        streamId:
+        fieldsgrouping_fields:
+        output_fields:
+          - msisdn
+          - cnt
+
+param:
+  KafkaSourceConnector:
+    properties.bootstrap.servers: 10.1.8.200:9092,10.1.8.201:9092,10.1.8.202:9092
+    properties.sasl.jaas.config: org.apache.kafka.common.security.plain.plainloginmodule required username="admin" password="admin";
+    format: avro
+    format.content: "{\"namespace\":\"com.cqx.jstorm.sql.bean.avro\",\"type\":\"record\",\"name\":\"nmc_tb_lte_s1mme_new\",\"fields\":[{\"name\": \"city\",  \"type\": [\"string\", \"null\"]},{\"name\": \"xdr_id\",  \"type\": [\"string\", \"null\"]},{\"name\": \"imsi\",  \"type\": [\"string\", \"null\"]},{\"name\": \"imei\",  \"type\": [\"string\", \"null\"]},{\"name\": \"msisdn\",  \"type\": [\"string\", \"null\"]},{\"name\": \"procedure_type\",  \"type\": [\"int\", \"null\"]},{\"name\": \"subprocedure_type\",  \"type\": [\"string\", \"null\"]},{\"name\": \"procedure_start_time\",  \"type\": [\"string\", \"null\"]},{\"name\": \"procedure_delay_time\",  \"type\": [\"int\", \"null\"]},{\"name\": \"procedure_end_time\",  \"type\": [\"string\", \"null\"]},{\"name\": \"procedure_status\",  \"type\": [\"int\", \"null\"]},{\"name\": \"old_mme_group_id\",  \"type\": [\"string\", \"null\"]},{\"name\": \"old_mme_code\",  \"type\": [\"string\", \"null\"]},{\"name\": \"lac\",  \"type\": [\"int\", \"null\"]},{\"name\": \"tac\",  \"type\": [\"int\", \"null\"]},{\"name\": \"cell_id\",  \"type\": [\"int\", \"null\"]},{\"name\": \"other_tac\",  \"type\": [\"string\", \"null\"]},{\"name\": \"other_eci\",  \"type\": [\"string\", \"null\"]},{\"name\": \"home_code\",  \"type\": [\"int\", \"null\"]},{\"name\": \"msisdn_home_code\",  \"type\": [\"int\", \"null\"]},{\"name\": \"old_mme_group_id_1\",  \"type\": [\"string\", \"null\"]},{\"name\": \"old_mme_code_1\",  \"type\": [\"string\", \"null\"]},{\"name\": \"old_m_tmsi\",  \"type\": [\"string\", \"null\"]},{\"name\": \"old_tac\",  \"type\": [\"string\", \"null\"]},{\"name\": \"old_eci\",  \"type\": [\"string\", \"null\"]},{\"name\": \"cause\",  \"type\": [\"string\", \"null\"]},{\"name\": \"keyword\",  \"type\": [\"string\", \"null\"]},{\"name\": \"mme_ue_s1ap_id\",  \"type\": [\"string\", \"null\"]},{\"name\": \"request_cause\",  \"type\": [\"string\", \"null\"]},{\"name\": \"keyword_2\",  \"type\": [\"string\", \"null\"]},{\"name\": \"keyword_3\",  \"type\": [\"string\", \"null\"]},{\"name\": \"keyword_4\",  \"type\": [\"string\", \"null\"]},{\"name\": \"bearer_qci1\",  \"type\": [\"int\", \"null\"]},{\"name\": \"bearer_status1\",  \"type\": [\"int\", \"null\"]},{\"name\": \"bearer_qci2\",  \"type\": [\"int\", \"null\"]},{\"name\": \"bearer_status2\",  \"type\": [\"int\", \"null\"]},{\"name\": \"bearer_qci3\",  \"type\": [\"int\", \"null\"]},{\"name\": \"bearer_status3\",  \"type\": [\"int\", \"null\"]},{\"name\": \"bearer_qci4\",  \"type\": [\"int\", \"null\"]},{\"name\": \"bearer_status4\",  \"type\": [\"int\", \"null\"]},{\"name\": \"bearer_qci5\",  \"type\": [\"int\", \"null\"]},{\"name\": \"bearer_status5\",  \"type\": [\"int\", \"null\"]},{\"name\": \"bearer_qci6\",  \"type\": [\"int\", \"null\"]},{\"name\": \"bearer_status6\",  \"type\": [\"int\", \"null\"]},{\"name\": \"bearer_1_request_cause\",  \"type\": [\"string\", \"null\"]},{\"name\": \"bearer_1_failure_cause\",  \"type\": [\"string\", \"null\"]},{\"name\": \"bearer_2_request_cause\",  \"type\": [\"string\", \"null\"]},{\"name\": \"bearer_2_failure_cause\",  \"type\": [\"string\", \"null\"]},{\"name\": \"bearer_3_request_cause\",  \"type\": [\"string\", \"null\"]},{\"name\": \"bearer_3_failure_cause\",  \"type\": [\"string\", \"null\"]},{\"name\": \"bearer_4_request_cause\",  \"type\": [\"string\", \"null\"]},{\"name\": \"bearer_4_failure_cause\",  \"type\": [\"string\", \"null\"]},{\"name\": \"bearer_5_request_cause\",  \"type\": [\"string\", \"null\"]},{\"name\": \"bearer_5_failure_cause\",  \"type\": [\"string\", \"null\"]},{\"name\": \"bearer_6_request_cause\",  \"type\": [\"string\", \"null\"]},{\"name\": \"bearer_6_failure_cause\",  \"type\": [\"string\", \"null\"]}]}"
+    topic: nmc_tb_lte_s1mme_new
+    properties.group.id: flinkthroughput
+    properties.security.protocol: SASL_PLAINTEXT
+    properties.sasl.mechanism: PLAIN
+    scan.startup.mode: fromBeginning
+  OperatorBolt:
+    groupby:
+      - msisdn
+    rule:
+      - field_name: msisdn
+        rule: count
+        aliasname: cnt

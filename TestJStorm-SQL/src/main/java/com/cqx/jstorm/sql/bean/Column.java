@@ -28,6 +28,7 @@ public class Column {
     public Column(Column column) {
         this.name = column.getName();
         this.type = column.getType();
+        this.value = column.getValue();
     }
 
     public Column(String name, String type) {

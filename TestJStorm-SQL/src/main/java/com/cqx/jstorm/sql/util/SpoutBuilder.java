@@ -1,7 +1,7 @@
 package com.cqx.jstorm.sql.util;
 
-import com.cqx.jstorm.bean.SendBean;
-import com.cqx.jstorm.bean.SpoutBean;
+import com.cqx.jstorm.comm.bean.SendBean;
+import com.cqx.jstorm.comm.bean.SpoutBean;
 
 import java.util.ArrayList;
 import java.util.HashMap;

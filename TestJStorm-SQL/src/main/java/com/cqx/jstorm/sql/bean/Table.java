@@ -137,4 +137,8 @@ public class Table {
     public String toJSON() {
         return JSON.toJSONString(this);
     }
+
+    public Column getColumnByName(String columnName) {
+        return columnMap.get(columnName);
+    }
 }

@@ -2,8 +2,8 @@ package com.cqx.jstorm.connector.sys;
 
 import backtype.storm.task.TopologyContext;
 import backtype.storm.tuple.Tuple;
-import com.cqx.jstorm.bean.ReceiveBean;
-import com.cqx.jstorm.bolt.IBolt;
+import com.cqx.jstorm.comm.bean.ReceiveBean;
+import com.cqx.jstorm.comm.bolt.IBolt;
 import com.cqx.jstorm.sql.bean.Column;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
