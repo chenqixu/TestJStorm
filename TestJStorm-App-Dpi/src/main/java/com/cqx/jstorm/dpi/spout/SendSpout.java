@@ -34,4 +34,10 @@ public class SendSpout extends ISpout {
         logger.info("send：{}", randomInt);
         Utils.sleep(randomInt);
     }
+
+    @Override
+    public void update(Map conf) {
+        sed = ((Number) conf.get("s-random")).intValue();
+        logger.info("触发更新：{}", sed);
+    }
 }

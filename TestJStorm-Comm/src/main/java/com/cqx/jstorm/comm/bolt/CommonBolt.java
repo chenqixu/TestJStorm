@@ -2,6 +2,7 @@ package com.cqx.jstorm.comm.bolt;
 
 import backtype.storm.task.OutputCollector;
 import backtype.storm.task.TopologyContext;
+import backtype.storm.topology.IDynamicComponent;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseRichBolt;
 import backtype.storm.tuple.Tuple;
@@ -17,7 +18,7 @@ import java.util.Map;
  *
  * @author chenqixu
  */
-public class CommonBolt extends BaseRichBolt {
+public class CommonBolt extends BaseRichBolt implements IDynamicComponent {
 
     private static final Logger logger = LoggerFactory.getLogger(CommonBolt.class);
     private IBolt iBolt;
@@ -63,5 +64,10 @@ public class CommonBolt extends BaseRichBolt {
     @Override
     public void cleanup() {
         this.iBolt.cleanup();
+    }
+
+    @Override
+    public void update(Map conf) {
+        this.iBolt.update((Map) conf.get("param"));
     }
 }

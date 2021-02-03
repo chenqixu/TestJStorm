@@ -78,4 +78,12 @@ public abstract class IBolt extends CommonMetric implements Serializable {
     public void setSendBeanList(List<SendBean> sendBeanList) {
         this.sendBeanList = sendBeanList;
     }
+
+    /**
+     * 动态更新配置
+     *
+     * @param conf
+     */
+    public void update(Map conf) {
+    }
 }

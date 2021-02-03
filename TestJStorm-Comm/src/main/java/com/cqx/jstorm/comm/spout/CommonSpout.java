@@ -2,6 +2,7 @@ package com.cqx.jstorm.comm.spout;
 
 import backtype.storm.spout.SpoutOutputCollector;
 import backtype.storm.task.TopologyContext;
+import backtype.storm.topology.IDynamicComponent;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseRichSpout;
 import com.cqx.jstorm.comm.bean.SpoutBean;
@@ -16,7 +17,7 @@ import java.util.Map;
  *
  * @author chenqixu
  */
-public class CommonSpout extends BaseRichSpout {
+public class CommonSpout extends BaseRichSpout implements IDynamicComponent {
 
     private static final Logger logger = LoggerFactory.getLogger(CommonSpout.class);
     private ISpout iSpout;
@@ -71,5 +72,10 @@ public class CommonSpout extends BaseRichSpout {
     @Override
     public void close() {
         this.iSpout.close();
+    }
+
+    @Override
+    public void update(Map conf) {
+        this.iSpout.update((Map) conf.get("param"));
     }
 }
