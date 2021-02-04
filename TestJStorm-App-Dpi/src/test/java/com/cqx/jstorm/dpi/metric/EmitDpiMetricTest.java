@@ -1,7 +1,6 @@
-package com.cqx.jstorm.comm.metric;
+package com.cqx.jstorm.dpi.metric;
 
 import com.cqx.jstorm.dpi.bean.DpiMetricBean;
-import com.cqx.jstorm.dpi.metric.EmitDpiMetric;
 import com.cqx.jstorm.comm.util.Utils;
 import org.junit.Before;
 import org.junit.Test;

@@ -1,8 +1,7 @@
-package com.cqx.jstorm.comm.spout;
+package com.cqx.jstorm.dpi.spout;
 
 import com.cqx.jstorm.dpi.bean.DpiFile;
 import com.cqx.jstorm.dpi.bean.TypeDef;
-import com.cqx.jstorm.dpi.spout.EmitDpiSpout;
 import com.cqx.jstorm.comm.test.TestSpout;
 import com.cqx.jstorm.comm.test.TestTuple;
 import com.cqx.jstorm.comm.util.AppConst;

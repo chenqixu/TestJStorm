@@ -1,4 +1,4 @@
-package com.cqx.jstorm.comm.bolt;
+package com.cqx.jstorm.dpi.bolt;
 
 import com.cqx.jstorm.dpi.bolt.EmitDpiErrBolt;
 import com.cqx.jstorm.dpi.bolt.EmitDpiIBolt;

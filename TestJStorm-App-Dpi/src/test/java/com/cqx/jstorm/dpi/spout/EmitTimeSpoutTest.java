@@ -1,4 +1,4 @@
-package com.cqx.jstorm.comm.spout;
+package com.cqx.jstorm.dpi.spout;
 
 import com.cqx.jstorm.dpi.spout.EmitTimeSpout;
 import com.cqx.jstorm.comm.test.TestSpout;

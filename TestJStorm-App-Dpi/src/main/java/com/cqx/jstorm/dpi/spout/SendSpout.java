@@ -3,12 +3,12 @@ package com.cqx.jstorm.dpi.spout;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.tuple.Values;
 import com.cqx.jstorm.comm.spout.ISpout;
-import com.cqx.jstorm.comm.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * SendSpout
@@ -18,26 +18,45 @@ import java.util.Random;
 public class SendSpout extends ISpout {
     private static Logger logger = LoggerFactory.getLogger(SendSpout.class);
     private Random random;
-    private int sed;
+    private long firstSendTime;
+    private long sendCnt = 0L;
+    private int maxSend = 12000;
+    private AtomicBoolean first = new AtomicBoolean(true);
 
     @Override
     public void open(Map conf, TopologyContext context) throws Exception {
         random = new Random();
-        sed = ((Number) conf.get("s-random")).intValue();
-        logger.info("open，s-random：{}", sed);
+        maxSend = ((Number) conf.get("maxSend")).intValue();
+        logger.info("open，maxSend：{}", maxSend);
     }
 
     @Override
     public void nextTuple() throws Exception {
-        int randomInt = random.nextInt(sed);
-        this.collector.emit(new Values(randomInt));
-        logger.info("send：{}", randomInt);
-        Utils.sleep(randomInt);
+        if (first.getAndSet(false)) {
+            firstSendTime = System.currentTimeMillis();
+            logger.info("firstSendTime：{}", firstSendTime);
+        }
+        long interval = System.currentTimeMillis() - firstSendTime;
+        //当前时间离首次发送的间隔，小于1秒
+        if (interval < 1000) {
+            //本次发送达到maxSend，就停止发送
+            if (sendCnt < maxSend) {
+                int randomInt = random.nextInt(1000);
+                collector.emit(new Values(randomInt));
+                sendCnt++;
+            }
+        }
+        //重置首次发送的时间，重置sendCnt为0
+        else {
+            logger.info("stop send，sendCnt：{}，firstSendTime：{}", sendCnt, firstSendTime);
+            firstSendTime = System.currentTimeMillis();
+            sendCnt = 0;
+        }
     }
 
     @Override
     public void update(Map conf) {
-        sed = ((Number) conf.get("s-random")).intValue();
-        logger.info("触发更新：{}", sed);
+        maxSend = ((Number) conf.get("maxSend")).intValue();
+        logger.info("触发更新：{}", maxSend);
     }
 }

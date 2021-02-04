@@ -1,8 +1,6 @@
-package com.cqx.jstorm.comm.bolt;
+package com.cqx.jstorm.dpi.bolt;
 
 import com.cqx.jstorm.dpi.bean.KafkaTuple;
-import com.cqx.jstorm.dpi.bolt.EmitDpiIBolt;
-import com.cqx.jstorm.dpi.bolt.EmitDpiKafkaBolt;
 import com.cqx.jstorm.comm.test.TestBolt;
 import com.cqx.jstorm.comm.util.TimeCostUtil;
 import com.cqx.jstorm.comm.util.Utils;

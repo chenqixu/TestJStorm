@@ -1,4 +1,4 @@
-package com.cqx.jstorm.comm.bolt;
+package com.cqx.jstorm.dpi.bolt;
 
 import com.cqx.jstorm.comm.test.TestBoltTransmission;
 import com.cqx.jstorm.comm.test.TestTuple;

@@ -1,4 +1,4 @@
-package com.cqx.jstorm.comm.spout;
+package com.cqx.jstorm.dpi.spout;
 
 import com.cqx.common.utils.system.SleepUtil;
 import com.cqx.jstorm.dpi.spout.FastFailureSpout;
