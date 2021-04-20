@@ -42,16 +42,21 @@ public class OrderSpout extends ISpout {
 
     @Override
     public void nextTuple() throws Exception {
-        sends.clear();
-        for (int i = 0; i < 5; i++) {
-            int r = random.nextInt(1000);
-            sends.add(r);
-            collector.emit(new Values(send_cnt + "_" + r), grenerateUUIDMessageId());
-            real_send_cnt++;
-            sp.mark();
-            Utils.sleep(1);
+        if (all_cnt == real_send_cnt) {
+            sends.clear();
+            for (int i = 0; i < 5; i++) {
+                int r = random.nextInt(1000);
+                sends.add(r);
+                collector.emit(new Values(send_cnt + "_" + r), grenerateUUIDMessageId());
+                real_send_cnt++;
+                sp.mark();
+                Utils.sleep(1);
+            }
+            send_cnt++;
+        } else {
+            logger.warn("all_cnt {} != real_send_cnt {}，Sleep 200 ms", all_cnt, real_send_cnt);
+            Utils.sleep(200);
         }
-        send_cnt++;
     }
 
     @Override
