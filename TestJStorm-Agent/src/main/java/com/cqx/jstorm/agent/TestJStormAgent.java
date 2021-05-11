@@ -3,8 +3,8 @@ package com.cqx.jstorm.agent;
 import com.cqx.jstorm.comm.base.KillTopology;
 import com.cqx.jstorm.comm.base.SubmitTopology;
 import com.cqx.jstorm.comm.bean.AgentBean;
-import com.cqx.jstorm.sql.util.ParserUtil;
 import com.cqx.jstorm.comm.util.ArgsParser;
+import com.cqx.jstorm.sql.util.ParserUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,10 +14,22 @@ import org.slf4j.LoggerFactory;
  * @author chenqixu
  */
 public class TestJStormAgent {
-
-    private static Logger logger = LoggerFactory.getLogger(TestJStormAgent.class);
+    private static final Logger logger = LoggerFactory.getLogger(TestJStormAgent.class);
 
     private TestJStormAgent() {
+    }
+
+    public static void main(String[] args) throws Exception {
+        if (args == null || !(args.length == 1)) {
+            logger.error("args is null，or not current，please check！");
+            return;
+        }
+        String conf_file = args[0];
+        String[] _args = new String[]{"--conf", "D:\\Document\\Workspaces\\Git\\TestJStorm\\TestJStorm-Agent\\src\\main\\resources\\" + conf_file,
+                "--type", "submit",
+                "--jarpath", "D:\\Document\\Workspaces\\Git\\TestJStorm\\target"
+        };
+        TestJStormAgent.builder().run(_args);
     }
 
     public static TestJStormAgent builder() {

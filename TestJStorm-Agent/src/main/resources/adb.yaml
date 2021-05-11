@@ -1,0 +1,68 @@
+jstorm:
+  nimbus_host: 10.1.8.203
+  nimbus_thrift_port: 17627
+  storm_zookeeper_servers:
+    - "10.1.8.200"
+    - "10.1.8.201"
+    - "10.1.8.202"
+  storm_zookeeper_port: 2183
+  storm_zookeeper_root: /udap/collect_jstorm
+
+topology:
+  worker_num: 1
+  ack_num: 0
+  worker_memory: 1073741824
+  cpu_slotNum: 100
+  jvm_options:
+  name: ADBTest
+  ip: 10.1.8.203
+
+spout:
+  name: ADBNullSpout
+  aliasname:
+  packagename: com.cqx.jstorm.dpi.spout
+  parall: 1
+  send:
+    - streamId: STREAM_CONSUMER
+      output_fields:
+        - consumer
+
+bolt:
+  - name: ADBConsumerBolt
+    aliasname:
+    packagename: com.cqx.jstorm.dpi.bolt
+    parall: 3
+    groupingcode: LOCALFIRSTGROUPING
+    receive:
+      - componentId: ADBNullSpout
+        streamId: STREAM_CONSUMER
+        fieldsgrouping_fields:
+        output_fields:
+          - consumer
+      - componentId: ADBSyncDBBolt
+        streamId: STREAM_REMOVE_QUEUE
+        fieldsgrouping_fields:
+        output_fields:
+          - remove
+    send:
+      - streamId:
+        output_fields:
+          - kafka
+  - name: ADBSyncDBBolt
+    aliasname:
+    packagename: com.cqx.jstorm.dpi.bolt
+    parall: 3
+    groupingcode: LOCALFIRSTGROUPING
+    receive:
+      - componentId: ADBConsumerBolt
+        streamId:
+        fieldsgrouping_fields:
+        output_fields:
+          - kafka
+    send:
+      - streamId: STREAM_REMOVE_QUEUE
+        output_fields:
+          - remove
+
+param:
+  s-random: 1000

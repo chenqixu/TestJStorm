@@ -9,7 +9,7 @@ jstorm:
   storm_zookeeper_root: /udap/collect_jstorm
 
 topology:
-  worker_num: 1
+  worker_num: 2
   ack_num: 1
   worker_memory: 1073741824
   cpu_slotNum: 100
@@ -21,7 +21,7 @@ spout:
   name: OrderSpout
   aliasname:
   packagename: com.cqx.jstorm.dpi.spout
-  parall: 1
+  parall: 2
   send:
     - streamId:
       output_fields:
@@ -31,7 +31,7 @@ bolt:
   - name: OrderBolt
     aliasname:
     packagename: com.cqx.jstorm.dpi.bolt
-    parall: 1
+    parall: 6
     groupingcode: LOCALFIRSTGROUPING
     receive:
       - componentId: OrderSpout
