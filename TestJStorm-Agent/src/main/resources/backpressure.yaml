@@ -1,0 +1,63 @@
+jstorm:
+  nimbus_host: 10.1.8.203
+  nimbus_thrift_port: 17627
+  storm_zookeeper_servers:
+    - "10.1.8.200"
+    - "10.1.8.201"
+    - "10.1.8.202"
+  storm_zookeeper_port: 2183
+  storm_zookeeper_root: /udap/collect_jstorm
+
+topology:
+  worker_num: 3
+  ack_num: 0
+  worker_memory: 1073741824
+  cpu_slotNum: 100
+  jvm_options:
+  name: BackPressureTest
+  ip: 10.1.8.203,10.1.8.204,10.1.8.205
+
+spout:
+  - name: ADBNullSpout
+    aliasname:
+    packagename: com.cqx.jstorm.dpi.spout
+    parall: 1
+    send:
+      - streamId:
+        output_fields:
+          - key
+
+bolt:
+  - name: BackPressureSuperBolt
+    aliasname:
+    packagename: com.cqx.jstorm.dpi.bolt
+    parall: 3
+    groupingcode: ALLGROUPING
+    receive:
+      - componentId: ADBNullSpout
+        streamId:
+        output_fields:
+          - key
+    send:
+        - streamId:
+          fieldsgrouping_fields:
+            - id
+          output_fields:
+            - id
+            - value
+  - name: BackPressureBolt
+    aliasname:
+    packagename: com.cqx.jstorm.dpi.bolt
+    parall: 3
+    groupingcode: FIELDSGROUPING
+    receive:
+      - componentId: BackPressureSuperBolt
+        streamId:
+        fieldsgrouping_fields:
+          - id
+        output_fields:
+          - id
+          - value
+
+param:
+  zookeeper: "10.1.8.200:2181"

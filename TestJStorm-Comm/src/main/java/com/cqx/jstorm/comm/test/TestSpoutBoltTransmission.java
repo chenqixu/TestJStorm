@@ -70,7 +70,7 @@ public class TestSpoutBoltTransmission extends TestBase {
     class Producer extends TestBaseRunable {
 
         @Override
-        void exec() throws Exception {
+        protected void exec() throws Exception {
             testSpout.nextTuple();
         }
     }
@@ -87,7 +87,7 @@ public class TestSpoutBoltTransmission extends TestBase {
         }
 
         @Override
-        void exec() throws Exception {
+        protected void exec() throws Exception {
             for (Map.Entry<String, BlockingQueue<TestTuple>> entry : tuplesMap.entrySet()) {
                 BlockingQueue<TestTuple> tuplesQueue = entry.getValue();// tpule queue
                 TestTuple testTuple;

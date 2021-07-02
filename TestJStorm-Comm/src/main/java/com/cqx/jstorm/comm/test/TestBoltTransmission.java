@@ -68,7 +68,7 @@ public class TestBoltTransmission extends TestBase {
     class TestBoltTransmissionRunble extends TestBaseRunable {
 
         @Override
-        void exec() throws Exception {
+        protected void exec() throws Exception {
             HashMap<String, BlockingQueue<TestTuple>> tuplesMap = iBoltStart.getAllTuples();
             for (Map.Entry<String, BlockingQueue<TestTuple>> entry : tuplesMap.entrySet()) {
                 BlockingQueue<TestTuple> tuplesQueue = entry.getValue();// tpule queue

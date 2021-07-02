@@ -6,7 +6,6 @@ import backtype.storm.utils.Utils;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -48,15 +47,20 @@ public class ListTopology {
                 }
             } else {
                 ClusterSummary clusterSummary = client.getClient().getClusterInfo();
-                System.out.println("supervisors_size：" + clusterSummary.get_supervisors_size());
-                List<SupervisorSummary> supervisorSummaryList = clusterSummary.get_supervisors();
-                for (SupervisorSummary supervisorSummary : supervisorSummaryList) {
-                    System.out.println(supervisorSummary.get_host());
+                // nimbus
+                System.out.println(clusterSummary.get_nimbus());
+                // supervisors
+                for (SupervisorSummary supervisorSummary : clusterSummary.get_supervisors()) {
+                    System.out.println(supervisorSummary);
+                }
+                // topologies
+                for (TopologySummary topologySummary : clusterSummary.get_topologies()) {
+                    System.out.println(topologySummary);
                 }
 //                System.out.println("Successfully get cluster info \n" + Utils.toPrettyJsonString(clusterSummary));
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.err.println(e.getMessage());
             e.printStackTrace();
             throw new RuntimeException(e);
         } finally {

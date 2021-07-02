@@ -65,10 +65,5 @@
             <artifactId>TestJStorm-Comm</artifactId>
             <version>1.0.0</version>
         </dependency>
-        <dependency>
-            <groupId>com.cqx</groupId>
-            <artifactId>TestCommon</artifactId>
-            <version>1.0.0</version>
-        </dependency>
     </dependencies>
 </project>

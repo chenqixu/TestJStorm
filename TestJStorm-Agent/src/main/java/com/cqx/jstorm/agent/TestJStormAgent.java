@@ -2,6 +2,7 @@ package com.cqx.jstorm.agent;
 
 import com.cqx.jstorm.comm.base.KillTopology;
 import com.cqx.jstorm.comm.base.SubmitTopology;
+import com.cqx.jstorm.comm.base.UpdateTopology;
 import com.cqx.jstorm.comm.bean.AgentBean;
 import com.cqx.jstorm.comm.util.ArgsParser;
 import com.cqx.jstorm.sql.util.ParserUtil;
@@ -20,13 +21,18 @@ public class TestJStormAgent {
     }
 
     public static void main(String[] args) throws Exception {
-        if (args == null || !(args.length == 1)) {
+        if (args == null || !(args.length == 2)) {
             logger.error("args is null，or not current，please check！");
             return;
         }
-        String conf_file = args[0];
+        String type = args[0];
+        String conf_file = args[1];
+        if (!(type.equals("submit") || type.equals("update"))) {
+            logger.error("type must in submit or update，please check！");
+            return;
+        }
         String[] _args = new String[]{"--conf", "D:\\Document\\Workspaces\\Git\\TestJStorm\\TestJStorm-Agent\\src\\main\\resources\\" + conf_file,
-                "--type", "submit",
+                "--type", type,
                 "--jarpath", "D:\\Document\\Workspaces\\Git\\TestJStorm\\target"
         };
         TestJStormAgent.builder().run(_args);
@@ -67,6 +73,9 @@ public class TestJStormAgent {
                 break;
             case "kill":
                 KillTopology.builder().kill(agentBean);
+                break;
+            case "update":
+                UpdateTopology.main(new String[]{args[1]});
                 break;
             default:
                 break;

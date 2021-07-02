@@ -16,8 +16,7 @@ import java.util.Map;
  * @author chenqixu
  */
 public class ClassLoadUtil {
-
-    private static Logger logger = LoggerFactory.getLogger(ClassLoadUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(ClassLoadUtil.class);
 
     public static ClassLoadUtil newbuilder() {
         return new ClassLoadUtil();

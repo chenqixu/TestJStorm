@@ -1,0 +1,49 @@
+jstorm:
+  nimbus_host: 10.1.8.203
+  nimbus_thrift_port: 17627
+  storm_zookeeper_servers:
+    - "10.1.8.200"
+    - "10.1.8.201"
+    - "10.1.8.202"
+  storm_zookeeper_port: 2183
+  storm_zookeeper_root: /udap/collect_jstorm
+
+topology:
+  worker_num: 1
+  ack_num: 0
+  worker_memory: 1073741824
+  cpu_slotNum: 100
+  jvm_options:
+  name: update
+  ip: 10.1.8.203
+
+spout:
+  name: ADBNullSpout
+  aliasname:
+  packagename: com.cqx.jstorm.dpi.spout
+  parall: 1
+  send:
+    - streamId:
+      output_fields:
+        - common
+
+param:
+  sleepTime: 1000
+  kafkaconf.bootstrap.servers: "10.1.8.200:9092,10.1.8.201:9092,10.1.8.202:9092"
+  kafkaconf.key.deserializer: "org.apache.kafka.common.serialization.StringDeserializer"
+  kafkaconf.value.deserializer: "org.apache.kafka.common.serialization.ByteArrayDeserializer"
+  kafkaconf.security.protocol: "SASL_PLAINTEXT"
+  kafkaconf.sasl.mechanism: "PLAIN"
+  kafkaconf.group.id: "test"
+  kafkaconf.enable.auto.commit: "false"
+  kafkaconf.fetch.min.bytes: "52428800"
+  kafkaconf.max.poll.records: "12000"
+  kafkaconf.heartbeat.interval.ms: "20000"
+  kafkaconf.session.timeout.ms: "60000"
+  kafkaconf.newland.kafka_username: admin
+  kafkaconf.newland.kafka_password: admin
+  kafkaconf.newland.consumer.mode: fromBeginning
+  #kafkaconf.newland.consumer.mode: "fromOffset"
+  #kafkaconf.newland.consumer.fromOffset: "0,20467"
+  schema_url: "http://10.1.8.200:8080/SchemaService/getSchema?t="
+  topic: "ogg_test"

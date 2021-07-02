@@ -9,6 +9,7 @@ import backtype.storm.topology.TopologyBuilder;
 import backtype.storm.tuple.Fields;
 import com.alibaba.jstorm.client.ConfigExtension;
 import com.alibaba.jstorm.client.WorkerAssignment;
+import com.cqx.common.utils.system.ReflectionUtil;
 import com.cqx.jstorm.comm.bean.AgentBean;
 import com.cqx.jstorm.comm.bean.BoltBean;
 import com.cqx.jstorm.comm.bean.ReceiveBean;
@@ -19,6 +20,7 @@ import com.cqx.jstorm.comm.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -97,7 +99,7 @@ public class SubmitTopology {
      * @throws ClassNotFoundException
      * @throws InstantiationException
      */
-    private void addBolt(TopologyBuilder builder) throws IllegalAccessException, ClassNotFoundException, InstantiationException {
+    private void addBolt(TopologyBuilder builder) throws IllegalAccessException, ClassNotFoundException, InstantiationException, InvocationTargetException {
         for (BoltBean boltBean : appConst.getBoltBeanList()) {
             BoltDeclarer boltDeclarer = builder.setBolt(boltBean.getAliasname(),
                     new CommonBolt(boltBean),
@@ -122,39 +124,56 @@ public class SubmitTopology {
                     }
                     break;
                 case GLOBALGROUPING:
+                    grouping(boltBean, boltDeclarer, "globalGrouping");
                     break;
                 case SHUFFLEGROUPING:
-                    for (ReceiveBean receiveBean : boltBean.getReceiveBeanList()) {
-                        if (receiveBean.getStreamId() != null) {
-                            boltDeclarer.shuffleGrouping(receiveBean.getComponentId(), receiveBean.getStreamId());
-                        } else {
-                            boltDeclarer.shuffleGrouping(receiveBean.getComponentId());
-                        }
-                    }
+                    grouping(boltBean, boltDeclarer, "shuffleGrouping");
                     break;
                 case LOCALORSHUFFLEGROUPING:
+                    grouping(boltBean, boltDeclarer, "localOrShuffleGrouping");
                     break;
                 case LOCALFIRSTGROUPING:
-                    for (ReceiveBean receiveBean : boltBean.getReceiveBeanList()) {
-                        if (receiveBean.getStreamId() != null) {
-                            boltDeclarer.localFirstGrouping(receiveBean.getComponentId(), receiveBean.getStreamId());
-                        } else {
-                            boltDeclarer.localFirstGrouping(receiveBean.getComponentId());
-                        }
-                    }
+                    grouping(boltBean, boltDeclarer, "localFirstGrouping");
                     break;
                 case NONEGROUPING:
+                    grouping(boltBean, boltDeclarer, "noneGrouping");
                     break;
                 case ALLGROUPING:
+                    grouping(boltBean, boltDeclarer, "allGrouping");
                     break;
                 case DIRECTGROUPING:
+                    grouping(boltBean, boltDeclarer, "directGrouping");
                     break;
                 case CUSTOMGROUPING:
-                    break;
+                    throw new UnsupportedOperationException("不支持的分组CUSTOMGROUPING！");
                 default:
                     break;
             }
             topologyBoltTaskParallelismMap.put(boltBean.getAliasname(), boltBean.getParall());
+        }
+    }
+
+    /**
+     * 公共分组操作，只支持1个参数或2个参数的形式
+     *
+     * @param boltBean
+     * @param boltDeclarer
+     * @param methodName
+     * @throws InvocationTargetException
+     */
+    private void grouping(BoltBean boltBean, BoltDeclarer boltDeclarer, String methodName) throws InvocationTargetException {
+        // 有StreamId
+        Class[] parameterHasStreamIdTypes = {java.lang.String.class, java.lang.String.class};
+        // 没有StreamId
+        Class[] parameterTypes = {java.lang.String.class};
+        for (ReceiveBean receiveBean : boltBean.getReceiveBeanList()) {
+            if (receiveBean.getStreamId() != null) {
+                Object[] parameters = {receiveBean.getComponentId(), receiveBean.getStreamId()};
+                ReflectionUtil.invokeMethod(boltDeclarer, methodName, parameterHasStreamIdTypes, parameters);
+            } else {
+                Object[] parameters = {receiveBean.getComponentId()};
+                ReflectionUtil.invokeMethod(boltDeclarer, methodName, parameterTypes, parameters);
+            }
         }
     }
 
