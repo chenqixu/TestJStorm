@@ -2,10 +2,11 @@ package com.cqx.jstorm.dpi.spout;
 
 import backtype.storm.task.TopologyContext;
 import backtype.storm.tuple.Values;
+import com.cqx.common.utils.kafka.KafkaConsumerGRUtil;
 import com.cqx.common.utils.param.ParamUtil;
+import com.cqx.common.utils.system.HookUtil;
 import com.cqx.common.utils.system.SleepUtil;
 import com.cqx.jstorm.comm.spout.ISpout;
-import com.cqx.jstorm.comm.util.kafka.KafkaConsumerGRUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +29,7 @@ public class ADBNullSpout extends ISpout {
     private long cnt = 0L;
     private KafkaConsumerGRUtil kafkaConsumerGRUtil;
     private AtomicBoolean isClose = new AtomicBoolean(false);
+    private AtomicBoolean isHook = new AtomicBoolean(false);
 
     @Override
     public void open(Map conf, TopologyContext context) throws Exception {
@@ -38,6 +40,14 @@ public class ADBNullSpout extends ISpout {
         logger.info("sleepTime：{}", sleepTime);
         kafkaConsumerGRUtil = new KafkaConsumerGRUtil(conf);
         kafkaConsumerGRUtil.subscribe((String) conf.get("topic"));
+        // 钩子
+        new HookUtil().addHook(new HookUtil.IHook() {
+            @Override
+            public void hook() throws Exception {
+                boolean compareAndSet = isHook.compareAndSet(false, true);
+                logger.info("hook，compareAndSet：{}，isHook：{}", compareAndSet, isHook.get());
+            }
+        });
     }
 
     @Override
@@ -55,14 +65,18 @@ public class ADBNullSpout extends ISpout {
             sleepTime = ParamUtil.setValDefault(conf, "sleepTime", 1000L);
 
             long threadId = Thread.currentThread().getId();
-//            logger.info("threadId：{}，currentThread.get()：{}，equal：{}"
-//                    , threadId, currentThread.get(), threadId != currentThread.get());
-            boolean not_compareAndSet = !currentThread.compareAndSet(NO_CURRENT_THREAD, threadId);
-//            logger.info("!compareAndSet：{}", !currentThread.compareAndSet(NO_CURRENT_THREAD, threadId));
+            logger.info("threadId：{}，currentThread.get()：{}，equal：{}"
+                    , threadId, currentThread.get(), threadId != currentThread.get());
+            logger.info("!compareAndSet：{}", !currentThread.compareAndSet(NO_CURRENT_THREAD, threadId));
 
-            if (kafkaConsumerGRUtil != null) {
-                kafkaConsumerGRUtil.close();
-                isClose.set(true);
+            if (!isClose.get()) {
+                if (kafkaConsumerGRUtil != null) {
+                    kafkaConsumerGRUtil.close();
+                    isClose.set(true);
+                }
+            } else {
+                kafkaConsumerGRUtil.reloadByMap();
+                isClose.set(false);
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -75,5 +89,8 @@ public class ADBNullSpout extends ISpout {
     public void close() {
         logger.info("关闭应用，cnt：{}", cnt);
         if (kafkaConsumerGRUtil != null) kafkaConsumerGRUtil.close();
+
+        boolean compareAndSet = isHook.compareAndSet(false, true);
+        logger.info("close，compareAndSet：{}，isHook：{}", compareAndSet, isHook.get());
     }
 }

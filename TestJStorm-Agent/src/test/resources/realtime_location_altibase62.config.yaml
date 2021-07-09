@@ -1,0 +1,41 @@
+jstorm:
+  nimbus_host: 10.48.134.118
+  nimbus_thrift_port: 17627
+  storm_zookeeper_servers:
+    - "10.48.134.152"
+    - "10.48.134.153"
+    - "10.48.134.154"
+  storm_zookeeper_port: 2184
+  storm_zookeeper_root: /streampaas-jstorm
+
+topology:
+  worker_num: 3
+  ack_num: 0
+  worker_memory: 4294967296
+  cpu_slotNum: 100
+  jvm_options:
+  name: realtime_location_altibase62
+  ip: 10.48.134.118,10.48.134.120
+
+spout:
+  name: ADBNullSpout
+  packagename: com.cqx.jstorm.dpi.spout
+  parall: 6
+  send:
+   - streamId:
+     output_fields:
+      - msisdn
+
+bolt:
+  - name: ADBConsumerBolt
+    packagename: com.cqx.jstorm.dpi.bolt
+    parall: 6
+    groupingcode: FIELDSGROUPING
+    receive:
+      - componentId: ADBNullSpout
+        streamId:
+        fieldsgrouping_fields:
+          - msisdn
+        output_fields:
+
+param:

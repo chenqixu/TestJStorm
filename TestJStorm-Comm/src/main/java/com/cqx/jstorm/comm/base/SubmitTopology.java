@@ -32,8 +32,7 @@ import java.util.Map;
  * @author chenqixu
  */
 public class SubmitTopology {
-
-    private static Logger logger = LoggerFactory.getLogger(SubmitTopology.class);
+    private static final Logger logger = LoggerFactory.getLogger(SubmitTopology.class);
     private YamlParser yamlParser = YamlParser.builder();
     private Map<String, Integer> topologySpoutTaskParallelismMap = new HashMap<>();
     private Map<String, Integer> topologyBoltTaskParallelismMap = new HashMap<>();
@@ -205,12 +204,15 @@ public class SubmitTopology {
         }
         int totleWorkNum = appConst.getTopologyBean().getWorker_num();
         String[] iparr = ips.split(",", -1);
-        // worknum must be a multipe of ip
-        if (iparr.length == 0 || totleWorkNum % iparr.length != 0) {
-            logger.warn("worknum：{} must be a multipe of ip：{}，please check.", totleWorkNum, ips);
-            logger.warn("Use default rules.");
-            return;
-        }
+        //#############################
+        // 平均分配，这里判断就不需要了
+        //#############################
+//        // worknum must be a multipe of ip
+//        if (iparr.length == 0 || totleWorkNum % iparr.length != 0) {
+//            logger.warn("worknum：{} must be a multipe of ip：{}，please check.", totleWorkNum, ips);
+//            logger.warn("Use default rules.");
+//            return;
+//        }
         // 平均分的
         Map<String, Integer> topologyAvgTaskParallelismMap = new HashMap<>(topologySpoutTaskParallelismMap);
         // 允许spout的并发不是worker的倍数

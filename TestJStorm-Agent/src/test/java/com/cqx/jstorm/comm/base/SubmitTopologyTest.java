@@ -1,5 +1,8 @@
 package com.cqx.jstorm.comm.base;
 
+import backtype.storm.topology.TopologyBuilder;
+import com.cqx.common.test.TestBase;
+import com.cqx.common.utils.system.ReflectionUtil;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,18 +10,17 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SubmitTopologyTest {
-
-    private static Logger logger = LoggerFactory.getLogger(SubmitTopologyTest.class);
+public class SubmitTopologyTest extends TestBase {
+    private static final Logger logger = LoggerFactory.getLogger(SubmitTopologyTest.class);
 
     @Test
     public void setHostAssignmentWorkers() {
-        int totleWorkNum = 20;
-        String ips = "10.1.8.78";
+        int totleWorkNum = 70;
+        String ips = "10.48.134.118,10.48.134.120,10.48.134.121,10.48.134.122,10.48.134.123,10.48.134.124,10.48.134.125,10.48.134.126,10.48.134.127,10.48.134.128,10.48.134.129,10.48.134.130,10.48.134.131,10.48.134.132,10.48.134.133,10.48.134.134,10.48.134.135";
         String[] iparr = ips.split(",", -1);
         Map<String, Integer> topologyTaskParallelismMap = new HashMap<>();
-        topologyTaskParallelismMap.put("spout", 1);
-        topologyTaskParallelismMap.put("bolt", 20);
+        topologyTaskParallelismMap.put("spout", 140);
+        topologyTaskParallelismMap.put("bolt", 140);
         logger.info("totleWorkNum % iparr.length：{}", totleWorkNum % iparr.length);
         for (int i = 0; i < totleWorkNum; i++) {
             logger.info("i % iparr.length：{}", i % iparr.length);
@@ -70,5 +72,23 @@ public class SubmitTopologyTest {
                 }
             }
         }
+    }
+
+    @Test
+    public void setHostAssignmentWorkersTest() throws Exception {
+        Map param = getParam("realtime_location_altibase62.config.yaml");
+        SubmitTopology st = SubmitTopology.builder();
+        st.setAppConst(param);
+        // 创建topology的生成器
+        TopologyBuilder builder = new TopologyBuilder();
+        // 创建Spout，因为是私有方法，需要用到反射
+        ReflectionUtil.invokeMethod(st, "addSpout"
+                , new Class[]{TopologyBuilder.class}, new Object[]{builder});
+        // 创建bolt，因为是私有方法，需要用到反射
+        ReflectionUtil.invokeMethod(st, "addBolt"
+                , new Class[]{TopologyBuilder.class}, new Object[]{builder});
+        // 分配策略，因为是私有方法，需要用到反射
+        ReflectionUtil.invokeMethod(st, "setHostAssignmentWorkers"
+                , new Class[]{Map.class}, new Object[]{param});
     }
 }
