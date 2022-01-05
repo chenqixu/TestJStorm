@@ -1,5 +1,6 @@
 package com.cqx.jstorm.dpi.spout;
 
+import backtype.storm.Config;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.tuple.Values;
 import com.cqx.jstorm.comm.spout.ISpout;
@@ -25,6 +26,13 @@ public class RandomSpout extends ISpout {
         random = new Random();
         sed = ((Number) conf.get("s-random")).intValue();
         logger.info("open，s-random：{}", sed);
+        logger.info("[Spout]TOPOLOGY_WORKERS：{}，getTaskToComponent：{}，getComponentIds()：{}，getThisComponentId：{}，getThisTaskId：{}，getThisTaskIndex：{}"
+                , conf.get(Config.TOPOLOGY_WORKERS)
+                , context.getTaskToComponent()
+                , context.getComponentIds()
+                , context.getThisComponentId()
+                , context.getThisTaskId()
+                , context.getThisTaskIndex());
     }
 
     @Override
@@ -33,9 +41,9 @@ public class RandomSpout extends ISpout {
         this.collector.emit(new Values(randomInt));
         logger.info("send：{}", randomInt);
         //判断是单还是双
-        if (randomInt % 2 == 0) {
-            throw new Exception(String.format("%s mod 2 == 0", randomInt));
-        }
+//        if (randomInt % 2 == 0) {
+//            throw new Exception(String.format("%s mod 2 == 0", randomInt));
+//        }
         Utils.sleep(randomInt);
     }
 }

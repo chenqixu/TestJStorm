@@ -18,7 +18,7 @@ public class KafkaProducerUtilTest {
     private GenericRecordUtil genericRecordUtil;
     private String topic = "nmc_tb_lte_http";
     private String schemaUrl = "http://localhost:18061/SchemaService/getSchema?t=";
-    private String conf = "D:\\Document\\Workspaces\\Git\\TestJStorm\\TestJStorm-App-Dpi\\src\\main\\resources\\producer.properties";
+    private String conf = "I:\\Document\\Workspaces\\Git\\TestJStorm\\TestJStorm-App-Dpi\\src\\main\\resources\\producer.properties";
 
     @Before
     public void setUp() throws Exception {

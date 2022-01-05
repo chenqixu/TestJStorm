@@ -31,9 +31,9 @@ public class TestJStormAgent {
             logger.error("type must in submit or update，please check！");
             return;
         }
-        String[] _args = new String[]{"--conf", "D:\\Document\\Workspaces\\Git\\TestJStorm\\TestJStorm-Agent\\src\\main\\resources\\" + conf_file,
+        String[] _args = new String[]{"--conf", "I:\\Document\\Workspaces\\Git\\TestJStorm\\TestJStorm-Agent\\src\\main\\resources\\" + conf_file,
                 "--type", type,
-                "--jarpath", "D:\\Document\\Workspaces\\Git\\TestJStorm\\target"
+                "--jarpath", "I:\\Document\\Workspaces\\Git\\TestJStorm\\target"
         };
         TestJStormAgent.builder().run(_args);
     }
@@ -90,7 +90,7 @@ public class TestJStormAgent {
 
         String[] args = new String[]{"--conf", "null",
                 "--type", "remote",
-                "--jarpath", "D:\\Document\\Workspaces\\Git\\TestJStorm\\target"
+                "--jarpath", "I:\\Document\\Workspaces\\Git\\TestJStorm\\target"
         };
         ArgsParser argsParser = ArgsParser.builder();
         argsParser.addParam("--conf");

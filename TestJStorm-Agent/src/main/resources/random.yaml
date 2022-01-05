@@ -9,53 +9,35 @@ jstorm:
   storm_zookeeper_root: /udap/collect_jstorm
 
 topology:
-  worker_num: 1
+  worker_num: 2
   ack_num: 0
   worker_memory: 1073741824
   cpu_slotNum: 100
   jvm_options:
   name: RandomTest
-  ip: 10.1.8.203
+  ip: 10.1.8.203,10.1.8.204
 
 spout:
   name: RandomSpout
   aliasname:
-  packagename: com.cqx.jstorm.spout
-  parall: 1
+  packagename: com.cqx.jstorm.dpi.spout
+  parall: 2
   send:
     - streamId:
       output_fields:
        - random
-
 bolt:
   - name: RandomGetBolt
-    aliasname: RandomGetBolt1
-    packagename: com.cqx.jstorm.bolt
-    parall: 1
+    aliasname: RandomGetBolt
+    packagename: com.cqx.jstorm.dpi.bolt
+    parall: 2
     groupingcode: LOCALFIRSTGROUPING
     receive:
       - componentId: RandomSpout
         streamId:
         fieldsgrouping_fields:
-        output_fields:
-          - random
-  - name: RandomGetBolt
-    aliasname: RandomGetBolt2
-    packagename: com.cqx.jstorm.bolt
-    parall: 1
-    groupingcode: LOCALFIRSTGROUPING
-    receive:
-      - componentId: RandomSpout
-        fieldsgrouping_fields:
-        streamId:
         output_fields:
           - random
 
 param:
-  s-random: 1000
-  RandomGetBolt1:
-    tns: "101"
-  RandomGetBolt2:
-    tns: "102"
-  tns: "222"
-  runtime.suppression.exception: true
+  s-random: 10000

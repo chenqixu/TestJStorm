@@ -7,9 +7,9 @@ public class TestJStormAgentTest {
 
     @Test
     public void localsubmit() throws Exception {
-        String[] _args = new String[]{"--conf", "D:\\Document\\Workspaces\\Git\\TestJStorm\\TestJStorm-Agent\\src\\main\\resources\\config.local.kafka.yaml",
+        String[] _args = new String[]{"--conf", "I:\\Document\\Workspaces\\Git\\TestJStorm\\TestJStorm-Agent\\src\\main\\resources\\config.local.kafka.yaml",
                 "--type", "localsubmit",
-                "--jarpath", "D:\\Document\\Workspaces\\Git\\TestJStorm\\target"
+                "--jarpath", "I:\\Document\\Workspaces\\Git\\TestJStorm\\target"
         };
         TestJStormAgent.builder().run(_args);
     }
@@ -23,9 +23,9 @@ public class TestJStormAgentTest {
 //        conf_file = "config.getandsend.yaml";
 //        conf_file = "random.remoute.yaml";
         conf_file = "order.yaml";
-        String[] _args = new String[]{"--conf", "D:\\Document\\Workspaces\\Git\\TestJStorm\\TestJStorm-Agent\\src\\main\\resources\\" + conf_file,
+        String[] _args = new String[]{"--conf", "I:\\Document\\Workspaces\\Git\\TestJStorm\\TestJStorm-Agent\\src\\main\\resources\\" + conf_file,
                 "--type", "submit",
-                "--jarpath", "D:\\Document\\Workspaces\\Git\\TestJStorm\\target"
+                "--jarpath", "I:\\Document\\Workspaces\\Git\\TestJStorm\\target"
         };
         TestJStormAgent.builder().run(_args);
     }
@@ -36,18 +36,18 @@ public class TestJStormAgentTest {
 //        conf_file = "config.yaml";
 //        conf_file = "config.getandsend.yaml";
         conf_file = "random.remoute.yaml";
-        String[] _args = new String[]{"--conf", "D:\\Document\\Workspaces\\Git\\TestJStorm\\TestJStorm-Agent\\src\\main\\resources\\" + conf_file,
+        String[] _args = new String[]{"--conf", "I:\\Document\\Workspaces\\Git\\TestJStorm\\TestJStorm-Agent\\src\\main\\resources\\" + conf_file,
                 "--type", "kill",
-                "--jarpath", "D:\\Document\\Workspaces\\Git\\TestJStorm\\target"
+                "--jarpath", "I:\\Document\\Workspaces\\Git\\TestJStorm\\target"
         };
         TestJStormAgent.builder().run(_args);
     }
 
     @Test
     public void killDpiParserLTE() throws Exception {
-        String[] _args = new String[]{"--conf", "D:\\Document\\Workspaces\\Git\\TestJStorm\\TestJStorm-Agent\\src\\main\\resources\\config.dpi.yaml",
+        String[] _args = new String[]{"--conf", "I:\\Document\\Workspaces\\Git\\TestJStorm\\TestJStorm-Agent\\src\\main\\resources\\config.dpi.yaml",
                 "--type", "kill",
-                "--jarpath", "D:\\Document\\Workspaces\\Git\\TestJStorm\\target"
+                "--jarpath", "I:\\Document\\Workspaces\\Git\\TestJStorm\\target"
         };
         TestJStormAgent.builder().run(_args);
     }

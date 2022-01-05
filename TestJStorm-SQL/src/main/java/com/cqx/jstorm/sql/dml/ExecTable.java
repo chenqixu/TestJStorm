@@ -178,7 +178,7 @@ public class ExecTable {
         // 解析参数
         String[] args = new String[]{"--conf", "null",
                 "--type", "remote",
-                "--jarpath", "D:\\Document\\Workspaces\\Git\\TestJStorm\\target"
+                "--jarpath", "I:\\Document\\Workspaces\\Git\\TestJStorm\\target"
         };
         ArgsParser argsParser = ArgsParser.builder();
         argsParser.addParam("--conf");

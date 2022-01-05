@@ -16,7 +16,7 @@ import java.util.Map;
 public class YamlParserTest {
 
     public static final String EXCEL_SPLIT = "\t";
-    public static final String CONF = "D:\\Document\\Workspaces\\Git\\TestJStorm\\TestJStorm-Agent\\src\\main\\resources\\";
+    public static final String CONF = "I:\\Document\\Workspaces\\Git\\TestJStorm\\TestJStorm-Agent\\src\\main\\resources\\";
     private static Logger logger = LoggerFactory.getLogger(YamlParserTest.class);
     private static Map<String, String> dfgxSave = new HashMap<>();
 
