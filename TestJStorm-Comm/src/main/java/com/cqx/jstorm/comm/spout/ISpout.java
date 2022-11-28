@@ -80,7 +80,7 @@ public abstract class ISpout extends CommonMetric implements Serializable {
         return taskInfo + result;
     }
 
-    public Object grenerateUUIDMessageId() {
+    public String grenerateUUIDMessageId() {
         return UUID.randomUUID().toString();
     }
 

@@ -1,0 +1,45 @@
+jstorm:
+  nimbus_host: 10.1.8.203
+  nimbus_thrift_port: 17627
+  storm_zookeeper_servers:
+    - "10.1.8.200"
+    - "10.1.8.201"
+    - "10.1.8.202"
+  storm_zookeeper_port: 2183
+  storm_zookeeper_root: /udap/collect_jstorm
+
+topology:
+  worker_num: 3
+  ack_num: 0
+  worker_memory: 1073741824
+  cpu_slotNum: 100
+  jvm_options:
+  name: MsisdnTest
+  ip: 10.1.8.203,10.1.8.204,10.1.8.205
+
+spout:
+  name: MsisdnTestSpout
+  aliasname:
+  packagename: com.cqx.jstorm.dpi.spout
+  parall: 1
+  send:
+    - streamId:
+      output_fields:
+       - mod
+       - msisdn
+bolt:
+  - name: MsisdnTestBolt
+    aliasname: MsisdnTestBolt
+    packagename: com.cqx.jstorm.dpi.bolt
+    parall: 3
+    groupingcode: FIELDSGROUPING
+    receive:
+      - componentId: MsisdnTestSpout
+        streamId:
+        fieldsgrouping_fields:
+          - mod
+        output_fields:
+          - mod
+          - msisdn
+
+param:
